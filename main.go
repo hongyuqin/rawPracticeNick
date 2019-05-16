@@ -1,7 +1,7 @@
 package main
 
 import (
-	"./nickdb_lib"
+	"./nickdblib"
 	"encoding/json"
 	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
@@ -39,7 +39,7 @@ func HandleFindUserById(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	user, err := nickdb_lib.FindUserById(id)
+	user, err := nickdblib.FindUserById(id)
 
 	if user == nil {
 		w.Write(genResponse(500, "customer not found", ""))
@@ -54,7 +54,7 @@ func HandleFindUserById(w http.ResponseWriter, req *http.Request) {
 }
 func HandleFindUserByName(w http.ResponseWriter, req *http.Request) {
 	name := req.URL.Query().Get("name")
-	user, err := nickdb_lib.FindUserByName(name)
+	user, err := nickdblib.FindUserByName(name)
 	if user == nil {
 		w.Write(genResponse(500, "customer not found", ""))
 		return
@@ -79,7 +79,7 @@ func HandleUpdateUser(w http.ResponseWriter, req *http.Request) {
 	var updateParam updateParam
 	if err = json.Unmarshal(body, &updateParam); err == nil {
 
-		err = nickdb_lib.UpdateUser(updateParam.Id, updateParam.Name, updateParam.Password, updateParam.Tag)
+		err = nickdblib.UpdateUser(updateParam.Id, updateParam.Name, updateParam.Password, updateParam.Tag)
 		if err != nil {
 			w.Write(genResponse(500, "HandleUpdateUser exception", ""))
 			return
@@ -99,10 +99,10 @@ func HandleAddUser(w http.ResponseWriter, req *http.Request) {
 	}
 	body_str := string(body)
 	log.Println(body_str)
-	var user nickdb_lib.User
+	var user nickdblib.User
 
 	if err := json.Unmarshal(body, &user); err == nil {
-		err = nickdb_lib.AddUser(user)
+		err = nickdblib.AddUser(user)
 		if err != nil {
 			w.Write(genResponse(500, "insert exception", ""))
 			return
@@ -122,7 +122,7 @@ func HandleDelUser(w http.ResponseWriter, req *http.Request) {
 	if err != nil {
 		log.Println(err)
 	}
-	err = nickdb_lib.DelUser(id, soft)
+	err = nickdblib.DelUser(id, soft)
 	if err != nil {
 		w.Write(genResponse(500, err.Error(), ""))
 		return
@@ -143,8 +143,8 @@ func genResponse(code int, msg string, data string) []byte {
 
 func main() {
 	//0.建立数据库连接
-	nickdb_lib.InitDB()
-	defer nickdb_lib.Db.Close()
+	nickdblib.InitDB()
+	defer nickdblib.Db.Close()
 	//1.http请求
 	http.HandleFunc("/users/findUserById", HandleFindUserById)
 	http.HandleFunc("/users/findByName", HandleFindUserByName)

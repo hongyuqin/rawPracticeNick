@@ -1,4 +1,4 @@
-package nickdb_lib
+package nickdblib
 
 import (
 	"database/sql"
