@@ -10,14 +10,6 @@ import (
 	"strconv"
 )
 
-//用户信息
-type User struct {
-	Id       int
-	Name     string
-	Password string
-	Status   int
-}
-
 //接口返回参数
 type returnData struct {
 	Code int
