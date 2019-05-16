@@ -75,7 +75,7 @@ func TestDelete(t *testing.T) {
 func TestMain(m *testing.M) {
 	log.Println("begin")
 	nickdblib.InitDB()
-	defer nickdblib.Db.Close()
+	defer nickdblib.DB.Close()
 	m.Run()
 	log.Println("end")
 }

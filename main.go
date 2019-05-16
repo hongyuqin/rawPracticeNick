@@ -66,8 +66,8 @@ func HandleUpdateUser(w http.ResponseWriter, req *http.Request) {
 		log.Println("ReadAll error :", err)
 		return
 	}
-	body_str := string(body)
-	log.Println(body_str)
+	bodyStr := string(body)
+	log.Println(bodyStr)
 	var updateParam updateParam
 	if err = json.Unmarshal(body, &updateParam); err == nil {
 
@@ -89,8 +89,8 @@ func HandleAddUser(w http.ResponseWriter, req *http.Request) {
 		log.Println("ReadAll error :", err)
 		return
 	}
-	body_str := string(body)
-	log.Println(body_str)
+	bodyStr := string(body)
+	log.Println(bodyStr)
 	var user nickdblib.User
 
 	if err := json.Unmarshal(body, &user); err == nil {
@@ -136,7 +136,7 @@ func genResponse(code int, msg string, data string) []byte {
 func main() {
 	//0.建立数据库连接
 	nickdblib.InitDB()
-	defer nickdblib.Db.Close()
+	defer nickdblib.DB.Close()
 	//1.http请求
 	http.HandleFunc("/users/findUserById", HandleFindUserById)
 	http.HandleFunc("/users/findByName", HandleFindUserByName)

@@ -15,7 +15,7 @@ type User struct {
 }
 
 //全局变量 数据库连接
-var Db *sql.DB
+var DB *sql.DB
 
 func InitDB() {
 	dbMain, err := sql.Open("mysql", "root:hongyuqin@/mydb")
@@ -28,13 +28,13 @@ func InitDB() {
 		log.Fatal(err)
 	}
 	log.Println("successful connect to mysql")
-	Db = dbMain
+	DB = dbMain
 }
 
 //1.1 查找：根据id查找一个用户
 func FindUserById(id int) (*User, error) {
 	log.Println("FindUserById : ", id)
-	row := Db.QueryRow("select id,password,status,name from users where id = ?", id)
+	row := DB.QueryRow("select id,password,status,name from users where id = ?", id)
 	var user User
 	var name, password string
 	var status int
@@ -54,7 +54,7 @@ func FindUserById(id int) (*User, error) {
 //1.2 查找：根据姓名查找用户
 func FindUserByName(searchName string) (*User, error) {
 	log.Println("FindUserByName : ", searchName)
-	row := Db.QueryRow("select id,password,status,name from users where name = ?", searchName)
+	row := DB.QueryRow("select id,password,status,name from users where name = ?", searchName)
 	var user User
 	var name, password string
 	var status, id int
@@ -74,7 +74,7 @@ func FindUserByName(searchName string) (*User, error) {
 //2.新增用户
 func AddUser(user User) error {
 	log.Println("addUser : ", user)
-	result, err := Db.Exec(
+	result, err := DB.Exec(
 		"INSERT INTO users (name, password,status) VALUES (?, ?,?)",
 		user.Name,
 		user.Password,
@@ -89,7 +89,7 @@ func DelUser(id int, soft string) error {
 	log.Println("delUser : ", id, soft)
 	//1.软删除
 	if soft == "1" {
-		result, err := Db.Exec("UPdate users set status=0 where id=? ", id)
+		result, err := DB.Exec("UPdate users set status=0 where id=? ", id)
 		affectNum, err := result.RowsAffected()
 		log.Println("affectNum err ", affectNum, err)
 		if affectNum == 0 {
@@ -99,7 +99,7 @@ func DelUser(id int, soft string) error {
 		return err
 	}
 	//2.硬删除
-	result, err := Db.Exec("DELETE FROM users WHERE id=?", id)
+	result, err := DB.Exec("DELETE FROM users WHERE id=?", id)
 	printResult(result, err)
 	return err
 }
@@ -109,14 +109,14 @@ func DelUser(id int, soft string) error {
 func UpdateUser(id int, name string, password string, tag int) error {
 	log.Println("update User : ", id, name, password, tag)
 	if tag == 1 {
-		result, err := Db.Exec("UPdate users set name=? where id=? ", name, id)
+		result, err := DB.Exec("UPdate users set name=? where id=? ", name, id)
 		printResult(result, err)
 		if err != nil {
 			return err
 		}
 		return nil
 	}
-	result, err := Db.Exec("UPdate users set password=? where id=? ", password, id)
+	result, err := DB.Exec("UPdate users set password=? where id=? ", password, id)
 	printResult(result, err)
 	if err != nil {
 		return err
