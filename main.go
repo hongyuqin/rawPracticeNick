@@ -1,15 +1,13 @@
 package main
 
 import (
-	"database/sql"
+	"./nickdb_lib"
 	"encoding/json"
-	"errors"
+	_ "github.com/go-sql-driver/mysql"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
-
-	_ "github.com/go-sql-driver/mysql"
 )
 
 //用户信息
@@ -35,117 +33,13 @@ type updateParam struct {
 	Tag      int
 }
 
-//1.1 查找：根据id查找一个用户
-func findById(id int) *User {
-	log.Println("findById : ", id)
-	row := db.QueryRow("select id,password,status,name from users where id = ?", id)
-	var user User
-	var name, password string
-	var status int
-	err := row.Scan(&id, &password, &status, &name)
-	if err != nil {
-		log.Println("search error ", err)
-		return nil
-	}
-	user.Id = id
-	user.Password = password
-	user.Status = status
-	user.Name = name
-	log.Println(user)
-	return &user
-}
-
-//1.2 查找：根据姓名查找用户
-func findByName(searchName string) *User {
-	log.Println("findByName : ", searchName)
-	row := db.QueryRow("select id,password,status,name from users where name = ?", searchName)
-	var user User
-	var name, password string
-	var status, id int
-	err := row.Scan(&id, &password, &status, &name)
-	if err != nil {
-		log.Println("search error ", err)
-		return nil
-	}
-	user.Id = id
-	user.Password = password
-	user.Status = status
-	user.Name = name
-	log.Println(user)
-	return &user
-}
-
-//2.新增用户
-func addUser(user User) error {
-	log.Println("addUser : ", user)
-	result, err := db.Exec(
-		"INSERT INTO users (name, password,status) VALUES (?, ?,?)",
-		user.Name,
-		user.Password,
-		1,
-	)
-	printResult(result, err)
-	return err
-}
-
-//3.删除用户
-func delUser(id int, soft string) error {
-	log.Println("delUser : ", id, soft)
-	//1.软删除
-	if soft == "1" {
-		result, err := db.Exec("UPdate users set status=0 where id=? ", id)
-		affectNum, err := result.RowsAffected()
-		log.Println("affectNum err ", affectNum, err)
-		if affectNum == 0 {
-			return errors.New("no update")
-		}
-		printResult(result, err)
-		return err
-	}
-	//2.硬删除
-	result, err := db.Exec("DELETE FROM users WHERE id=?", id)
-	printResult(result, err)
-	return err
-}
-
-//4.1 修改用户姓名、密码(根据id)
-//tag=1修改姓名  tag=2修改密码
-func updateUser(id int, name string, password string, tag int) error {
-	log.Println("update User : ", id, name, password, tag)
-	if tag == 1 {
-		result, err := db.Exec("UPdate users set name=? where id=? ", name, id)
-		printResult(result, err)
-		if err != nil {
-			return err
-		}
-		return nil
-	}
-	result, err := db.Exec("UPdate users set password=? where id=? ", password, id)
-	printResult(result, err)
-	if err != nil {
-		return err
-	}
-	affectNum, err := result.RowsAffected()
-	log.Println("affectNum err ", affectNum, err)
-	if affectNum == 0 {
-		return errors.New("no affect")
-	}
-	return nil
-}
-
-func printResult(result sql.Result, err error) {
-	if err != nil {
-		log.Println("错误信息为：", err)
-	}
-}
-
-func findByIdHttp(w http.ResponseWriter, req *http.Request) {
+func HandleFindUserById(w http.ResponseWriter, req *http.Request) {
 	strId := req.URL.Query().Get("id")
 	id, err := strconv.Atoi(strId)
 	if err != nil {
 		log.Println(err)
 	}
-	user := findById(id)
+	user, err := nickdb_lib.FindUserById(id)
 
 	if user == nil {
 		w.Write(genResponse(500, "customer not found", ""))
@@ -158,9 +52,9 @@ func findByIdHttp(w http.ResponseWriter, req *http.Request) {
 	log.Println(string(jsonBytes))
 	w.Write(genResponse(0, "", string(jsonBytes)))
 }
-func findByNameHttp(w http.ResponseWriter, req *http.Request) {
+func HandleFindUserByName(w http.ResponseWriter, req *http.Request) {
 	name := req.URL.Query().Get("name")
-	user := findByName(name)
+	user, err := nickdb_lib.FindUserByName(name)
 	if user == nil {
 		w.Write(genResponse(500, "customer not found", ""))
 		return
@@ -174,33 +68,41 @@ func findByNameHttp(w http.ResponseWriter, req *http.Request) {
 	log.Println(string(jsonBytes))
 	w.Write(genResponse(0, "", string(jsonBytes)))
 }
-func updateUserHttp(w http.ResponseWriter, req *http.Request) {
-	body, _ := ioutil.ReadAll(req.Body)
+func HandleUpdateUser(w http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		log.Println("ReadAll error :", err)
+		return
+	}
 	body_str := string(body)
 	log.Println(body_str)
 	var updateParam updateParam
-	if err := json.Unmarshal(body, &updateParam); err == nil {
+	if err = json.Unmarshal(body, &updateParam); err == nil {
 
-		err = updateUser(updateParam.Id, updateParam.Name, updateParam.Password, updateParam.Tag)
+		err = nickdb_lib.UpdateUser(updateParam.Id, updateParam.Name, updateParam.Password, updateParam.Tag)
 		if err != nil {
-			w.Write(genResponse(500, "updateUserHttp exception", ""))
+			w.Write(genResponse(500, "HandleUpdateUser exception", ""))
 			return
 		}
-		w.Write(genResponse(0, "updateUserHttp success", ""))
+		w.Write(genResponse(0, "HandleUpdateUser success", ""))
 		return
 	} else {
 		log.Println(err)
-		w.Write(genResponse(500, "updateUserHttp error", ""))
+		w.Write(genResponse(500, "HandleUpdateUser error", ""))
 	}
 }
-func addUserHttp(w http.ResponseWriter, req *http.Request) {
-	body, _ := ioutil.ReadAll(req.Body)
+func HandleAddUser(w http.ResponseWriter, req *http.Request) {
+	body, err := ioutil.ReadAll(req.Body)
+	if err != nil {
+		log.Println("ReadAll error :", err)
+		return
+	}
 	body_str := string(body)
 	log.Println(body_str)
-	var user User
+	var user nickdb_lib.User
 
 	if err := json.Unmarshal(body, &user); err == nil {
-		err = addUser(user)
+		err = nickdb_lib.AddUser(user)
 		if err != nil {
 			w.Write(genResponse(500, "insert exception", ""))
 			return
@@ -212,15 +114,15 @@ func addUserHttp(w http.ResponseWriter, req *http.Request) {
 		w.Write(genResponse(500, "insert error", ""))
 	}
 }
-func delUserHttp(w http.ResponseWriter, req *http.Request) {
+func HandleDelUser(w http.ResponseWriter, req *http.Request) {
 	strId := req.URL.Query().Get("id")
 	soft := req.URL.Query().Get("soft")
-	log.Println("delUserHttp :", strId, soft)
+	log.Println("HandleDelUser :", strId, soft)
 	id, err := strconv.Atoi(strId)
 	if err != nil {
 		log.Println(err)
 	}
-	err = delUser(id, soft)
+	err = nickdb_lib.DelUser(id, soft)
 	if err != nil {
 		w.Write(genResponse(500, err.Error(), ""))
 		return
@@ -239,28 +141,16 @@ func genResponse(code int, msg string, data string) []byte {
 	return jsonBytes
 }
 
-//全局变量 数据库连接
-var db *sql.DB
-
 func main() {
 	//0.建立数据库连接
-	dbMain, err := sql.Open("mysql", "root:hongyuqin@/mydb")
-	if err != nil {
-		log.Fatalf("Open database error: %s\n", err)
-	}
-	defer dbMain.Close()
-	err = dbMain.Ping()
-	if err != nil {
-		log.Fatal(err)
-	}
-	log.Println("successful connect to mysql")
-	db = dbMain
+	nickdb_lib.InitDB()
+	defer nickdb_lib.Db.Close()
 	//1.http请求
-	http.HandleFunc("/users/findById", findByIdHttp)
-	http.HandleFunc("/users/findByName", findByNameHttp)
-	http.HandleFunc("/users/updateUser", updateUserHttp)
-	http.HandleFunc("/users/addUser", addUserHttp)
-	http.HandleFunc("/users/delUser", delUserHttp)
+	http.HandleFunc("/users/findUserById", HandleFindUserById)
+	http.HandleFunc("/users/findByName", HandleFindUserByName)
+	http.HandleFunc("/users/updateUser", HandleUpdateUser)
+	http.HandleFunc("/users/addUser", HandleAddUser)
+	http.HandleFunc("/users/delUser", HandleDelUser)
 	http.ListenAndServe(":8001", nil)
 
 }
