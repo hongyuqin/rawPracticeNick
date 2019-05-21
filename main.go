@@ -2,8 +2,10 @@ package main
 
 import (
 	"./nickdblib"
+	"./proto"
 	"encoding/json"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/golang/protobuf/proto"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -135,7 +137,7 @@ func genResponse(code int, msg string, data string) []byte {
 
 func main() {
 	//0.建立数据库连接
-	nickdblib.InitDB()
+	/*nickdblib.InitDB()
 	defer nickdblib.DB.Close()
 	//1.http请求
 	http.HandleFunc("/users/findUserById", HandleFindUserById)
@@ -143,6 +145,38 @@ func main() {
 	http.HandleFunc("/users/updateUser", HandleUpdateUser)
 	http.HandleFunc("/users/addUser", HandleAddUser)
 	http.HandleFunc("/users/delUser", HandleDelUser)
-	http.ListenAndServe(":8001", nil)
+	http.ListenAndServe(":8001", nil)*/
+
+	//1.测试proto
+
+	// 为 AllPerson 填充数据
+	p1 := example.Person{
+		Id:   *proto.Int32(1),
+		Name: *proto.String("xieyanke"),
+	}
+
+	p2 := example.Person{
+		Id:   2,
+		Name: "gopher",
+	}
+
+	all_p := example.AllPerson{
+		Per: []*example.Person{&p1, &p2},
+	}
+
+	// 对数据进行序列化
+	data, err := proto.Marshal(&all_p)
+	if err != nil {
+		log.Fatalln("Mashal data error:", err)
+	}
+
+	// 对已经序列化的数据进行反序列化
+	var target example.AllPerson
+	err = proto.Unmarshal(data, &target)
+	if err != nil {
+		log.Fatalln("UnMashal data error:", err)
+	}
+
+	println(target.Per[0].Name) // 打印第一个 person Name 的值进行反序列化验证
 
 }
