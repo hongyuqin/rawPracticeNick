@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"runtime"
+	"sync"
 	"time"
 )
 
@@ -22,6 +24,8 @@ func switchTest(x interface{}) {
 		fmt.Printf("未知型")
 	}
 }
+
+//就是监听 IO 操作，当 IO 操作发生时，触发相应的动作
 func selectTest() {
 	timeout := make(chan bool, 1)
 	go func() {
@@ -43,8 +47,32 @@ func selectTestCh() {
 		fmt.Println("channel is full !")
 	}
 }
+func testSyncMap() {
+	var scene sync.Map
+	// 将键值对保存到sync.Map
+	scene.Store("greece", 97)
+	scene.Store("london", 100)
+	scene.Store("egypt", 200)
+	// 从sync.Map中根据键取值
+	fmt.Println(scene.Load("london"))
+	// 根据键删除对应的键值对
+	scene.Delete("london")
+	// 遍历所有sync.Map中的键值对
+	scene.Range(func(k, v interface{}) bool {
+		fmt.Println("iterate:", k, v)
+		return true
+	})
+}
+
+//查询cpu数量
+func findCpuNum() {
+	cpuNum := runtime.NumCPU()
+	fmt.Print(cpuNum)
+}
 func main() {
 	//switchTest(true)
 	//selectTest()
-	selectTestCh()
+	//selectTestCh()
+	//testSyncMap()
+	findCpuNum()
 }
