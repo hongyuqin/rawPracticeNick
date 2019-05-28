@@ -69,10 +69,24 @@ func findCpuNum() {
 	cpuNum := runtime.NumCPU()
 	fmt.Print(cpuNum)
 }
+func testTimer() {
+	timer := time.NewTimer(time.Second * 2)
+	<-timer.C
+	println("Timer expired")
+}
+func testSlice() {
+	a := make([]int, 2)
+	a = append(a, 10)
+	a = append(a, 101)
+	a = append(a, 100)
+	fmt.Println(a)
+}
 func main() {
 	//switchTest(true)
 	//selectTest()
 	//selectTestCh()
 	//testSyncMap()
-	findCpuNum()
+	//findCpuNum()
+	//testTimer()
+	testSlice()
 }
