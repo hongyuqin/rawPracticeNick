@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/pkg/profile"
+	"reflect"
 	"runtime"
 	"sync"
 	"time"
@@ -69,10 +71,78 @@ func findCpuNum() {
 	cpuNum := runtime.NumCPU()
 	fmt.Print(cpuNum)
 }
+
+type Person struct {
+	name string
+	age  int
+}
+
+//?? 指针为什么也不变
+func (p *Person) doSth() {
+	str := "hongmin"
+	p.name = str
+}
+
+//反射
+func testReflect() {
+	var a *Person
+	typeOfA := reflect.TypeOf(a)
+	fmt.Println(typeOfA.Name())
+	fmt.Println("========")
+	fmt.Println(typeOfA.Kind())
+}
+
+//性能分析 ??
+func joinSlice() []string {
+	stopper := profile.Start(profile.CPUProfile, profile.ProfilePath("."))
+	// 在main()结束时停止性能分析
+	defer stopper.Stop()
+	// 分析的核心逻辑
+	joinSlice()
+	// 让程序至少运行1秒
+	time.Sleep(time.Second)
+	var arr []string
+	for i := 0; i < 100000; i++ {
+		// 故意造成多次的切片添加(append)操作, 由于每次操作可能会有内存重新分配和移动, 性能较低
+		arr = append(arr, "arr")
+	}
+	return arr
+}
+
+//测试通道
+func testCh() {
+	c1 := make(chan int)
+	c2 := make(chan int)
+	go func() {
+		for i := 1; i < 10; i++ {
+			c1 <- i
+		}
+	}()
+	go func() {
+		for i := 10; i < 20; i++ {
+			c2 <- i
+		}
+	}()
+
+	for i := 0; i < 10; i++ {
+		v1 := <-c1
+		v2 := <-c2
+		fmt.Printf("c1 = %d;c2 = %d\n", v1, v2)
+	}
+}
 func main() {
 	//switchTest(true)
 	//selectTest()
 	//selectTestCh()
 	//testSyncMap()
-	findCpuNum()
+	//findCpuNum()
+	/*p := new(Person)
+	p.name = "hongyuqin"
+	p.age = 26
+	fmt.Println("person is :",p)*/
+	//testReflect()
+	// 开始性能分析, 返回一个停止接口
+	//测试通道
+	//testCh()
+
 }
