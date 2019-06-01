@@ -130,6 +130,18 @@ func testCh() {
 		fmt.Printf("c1 = %d;c2 = %d\n", v1, v2)
 	}
 }
+func testTimer() {
+	timer := time.NewTimer(time.Second * 2)
+	<-timer.C
+	println("Timer expired")
+}
+func testSlice() {
+	a := make([]int, 2)
+	a = append(a, 10)
+	a = append(a, 101)
+	a = append(a, 100)
+	fmt.Println(a)
+}
 func main() {
 	//switchTest(true)
 	//selectTest()
@@ -145,4 +157,7 @@ func main() {
 	//测试通道
 	//testCh()
 
+	//findCpuNum()
+	//testTimer()
+	testSlice()
 }
