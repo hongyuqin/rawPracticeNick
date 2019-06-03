@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"github.com/pkg/profile"
 	"reflect"
 	"runtime"
+	"strings"
 	"sync"
 	"time"
 )
@@ -72,11 +72,6 @@ func findCpuNum() {
 	fmt.Print(cpuNum)
 }
 
-type Person struct {
-	name string
-	age  int
-}
-
 //?? 指针为什么也不变
 func (p *Person) doSth() {
 	str := "hongmin"
@@ -93,7 +88,7 @@ func testReflect() {
 }
 
 //性能分析 ??
-func joinSlice() []string {
+/*func joinSlice() []string {
 	stopper := profile.Start(profile.CPUProfile, profile.ProfilePath("."))
 	// 在main()结束时停止性能分析
 	defer stopper.Stop()
@@ -107,7 +102,7 @@ func joinSlice() []string {
 		arr = append(arr, "arr")
 	}
 	return arr
-}
+}*/
 
 //测试通道
 func testCh() {
@@ -142,7 +137,88 @@ func testSlice() {
 	a = append(a, 100)
 	fmt.Println(a)
 }
+func testDuration() {
+	now := time.Now()
+	time.Sleep(1e9)
+	fmt.Println(time.Since(now))
+}
+
+//uuid生成器
+func testReplace() {
+	ret := strings.Replace("abc-sss", "-", "", -1)
+	ret1 := strings.Replace("abc-sss", "-", "", -1)
+	fmt.Println(ret, "   ", ret1)
+}
+
+//锁变量 同步协程
+var counter int = 0
+
+func Count(lock *sync.Mutex) {
+	lock.Lock() // 上锁
+	counter++
+	fmt.Println("counter =", counter)
+	lock.Unlock() // 解锁
+}
+func testLock() {
+	lock := &sync.Mutex{}
+	for i := 0; i < 10; i++ {
+		go Count(lock)
+	}
+	for {
+		lock.Lock() // 上锁
+		c := counter
+		lock.Unlock() // 解锁
+
+		runtime.Gosched() // 出让时间片
+
+		if c >= 10 {
+			break
+		}
+	}
+}
+
+type Person struct {
+	name string
+}
+
+func testValueDeliver(p *Person) {
+	p.name = "yibei"
+}
+func testSuffix() {
+	str := "abc,"
+	str = str[:len(str)-1]
+	fmt.Println(str)
+}
+
+//测试map 假如不存在，ok就是false吗
+func testMap() {
+	scene := make(map[string]int)
+	scene["route"] = 66
+	_, ok := scene["ss"]
+	fmt.Println("testMap :", ok)
+}
+
+//看下 数组 是不是 slice
+func testSlice1() {
+	arr := [...]int{1, 2}
+	fmt.Printf("len=%d cap=%d slice=%v\n", len(arr), cap(arr), arr)
+	switchTest(arr)
+}
+func testRemoveMap() {
+	scene := make(map[string]int)
+	scene["route"] = 66
+
+	fmt.Println("before map :", scene)
+	for k, _ := range scene {
+		if k == "route" {
+			delete(scene, "route")
+		}
+	}
+	fmt.Println("after map :", scene)
+
+}
 func main() {
+	//testReplace()
 	//switchTest(true)
 	//selectTest()
 	//selectTestCh()
@@ -159,5 +235,16 @@ func main() {
 
 	//findCpuNum()
 	//testTimer()
-	testSlice()
+	//testSlice()
+	//testDuration()
+	//testLock()
+	/*p := &Person{
+		name:"hongyuqin",
+	}
+	testValueDeliver(p)
+	fmt.Println(p)*/
+	//testSuffix()
+	//testMap()//只是当做set用。。。
+	//testSlice1()
+	testRemoveMap()
 }
