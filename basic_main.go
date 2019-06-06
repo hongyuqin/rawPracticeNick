@@ -2,6 +2,8 @@ package main
 
 import (
 	"fmt"
+	"io"
+	"math"
 	"reflect"
 	"runtime"
 	"strings"
@@ -217,7 +219,55 @@ func testRemoveMap() {
 	fmt.Println("after map :", scene)
 
 }
+
+//测试下map ok有没用
+func testNilMap() {
+	coupleMap := make(map[string](string))
+	coupleMap["hongyuqin"] = "hongyibei"
+	couple, ok := coupleMap["hongyuqin"]
+	if ok {
+		fmt.Println(couple)
+	}
+	//看下会不会报错
+	fmt.Println("==》", coupleMap["hongyuqn"])
+}
+
+//测下方法接收者
+type Vertex struct {
+	X, Y float64
+}
+
+func (v *Vertex) Scale(f float64) {
+	v.X = v.X * f
+	v.Y = v.Y * f
+}
+
+func (v *Vertex) Abs() float64 {
+	return math.Sqrt(v.X*v.X + v.Y*v.Y)
+}
+func testPointerReceiver() {
+	v := &Vertex{3, 4}
+	v.Scale(5)
+	fmt.Println(v, v.Abs())
+}
+
+//测试reader
+func testReader() {
+	r := strings.NewReader("Hello, Reader!")
+	b := make([]byte, 8)
+	for {
+		n, err := r.Read(b)
+		fmt.Printf("n = %v err = %v b = %v\n", n, err, b)
+		fmt.Printf("b[:n] = %q\n", b[:n])
+		if err == io.EOF {
+			break
+		}
+	}
+}
 func main() {
+	testReader()
+	//testPointerReceiver()
+	//testNilMap()
 	//testReplace()
 	//switchTest(true)
 	//selectTest()
@@ -246,5 +296,6 @@ func main() {
 	//testSuffix()
 	//testMap()//只是当做set用。。。
 	//testSlice1()
-	testRemoveMap()
+	//testRemoveMap()
+
 }
