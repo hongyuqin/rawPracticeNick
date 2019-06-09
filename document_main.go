@@ -170,15 +170,53 @@ func commandline() {
 }
 
 //10.看下空指针会不会panic
-func testPanic(p *Person) {
+/*func testPanic(p *Person) {
 	fmt.Println("person is :", p.name)
-}
+}*/
 
 //11.测下返回
 func testReturn() (er error) {
 	return
 }
+
+//12.测试下select超时
+func testTimeout() {
+	c1 := make(chan string, 1)
+	go func() {
+		time.Sleep(2 * time.Second)
+		c1 <- "result 1"
+	}()
+	select {
+	case res := <-c1:
+		fmt.Println(res)
+	case <-time.After(1 * time.Second):
+		fmt.Println("timeout 1")
+	}
+	c2 := make(chan string, 1)
+	go func() {
+		time.Sleep(2 * time.Second)
+		c2 <- "result 2"
+	}()
+	select {
+	case res := <-c2:
+		fmt.Println(res)
+	case <-time.After(3 * time.Second):
+		fmt.Println("timeout 2")
+	}
+}
+
+//13.测试下 通过管道传输后，值是否变空
+func testChannelVal() {
+	str := "hahaha"
+	c1 := make(chan string, 1)
+	c1 <- str
+	fmt.Println(<-c1, "  ", str)
+}
 func main() {
+	//13
+	testChannelVal()
+	//12.
+	//testTimeout()
 	//1.测试goroutine
 	//testGoroutine()
 	//2.通道同步
@@ -197,6 +235,6 @@ func main() {
 	//testNumFormat()
 	//9.命令行参数
 	//commandline()
-	testPanic(nil)
-	fmt.Println("ddss")
+	//testPanic(nil)
+	//fmt.Println("ddss")
 }
