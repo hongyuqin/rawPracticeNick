@@ -24,5 +24,6 @@ func main() {
 	beego.Any("/foo", func(ctx *context.Context) {
 		ctx.Output.Body([]byte("bar"))
 	})
+
 	beego.Run()
 }
