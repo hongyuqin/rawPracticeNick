@@ -2,8 +2,10 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"math/rand"
 	"os"
+	"reflect"
 	"strconv"
 	"time"
 )
@@ -212,9 +214,34 @@ func testChannelVal() {
 	c1 <- str
 	fmt.Println(<-c1, "  ", str)
 }
+
+//14.反射
+func testReflect2() {
+	number := 190
+	fmt.Println(reflect.TypeOf(number), "  ", reflect.ValueOf(number))
+}
+
+//15.空接口断言，来实现反射类型强转
+type Employee struct {
+	Name string
+	Age  int
+}
+
+func reflectPrint(v interface{}) {
+	empVal, ok := v.(*Employee)
+	if ok {
+		log.Println(empVal)
+	}
+}
+func testAssert() {
+	emp := &Employee{"naonao", 99}
+	reflectPrint(emp)
+}
 func main() {
+	testAssert()
 	//13
-	testChannelVal()
+	//testReflect2()
+	//testChannelVal()
 	//12.
 	//testTimeout()
 	//1.测试goroutine

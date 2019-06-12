@@ -81,7 +81,7 @@ func (p *Person) doSth() {
 }
 
 //反射
-func testReflect() {
+func TestReflect() {
 	var a *Person
 	typeOfA := reflect.TypeOf(a)
 	fmt.Println(typeOfA.Name())
@@ -265,7 +265,9 @@ func testReader() {
 	}
 }
 func main() {
-	testReader()
+	//测试反射
+	TestReflect()
+	//testReader()
 	//testPointerReceiver()
 	//testNilMap()
 	//testReplace()
