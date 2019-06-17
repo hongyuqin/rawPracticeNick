@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"math/rand"
 	"os"
 	"reflect"
@@ -222,7 +221,7 @@ func testReflect2() {
 }
 
 //15.空接口断言，来实现反射类型强转
-type Employee struct {
+/*type Employee struct {
 	Name string
 	Age  int
 }
@@ -236,9 +235,83 @@ func reflectPrint(v interface{}) {
 func testAssert() {
 	emp := &Employee{"naonao", 99}
 	reflectPrint(emp)
+}*/
+//16.method继承:如果某字段实现了一个method，那么包含这个匿名字段的struct也能调用该method
+type Human struct {
+	name  string
+	age   int
+	phone string
+}
+
+type Student struct {
+	Human  //匿名字段
+	school string
+}
+
+type Employee struct {
+	Human   //匿名字段
+	company string
+}
+
+//在human上面定义了一个method
+func (h *Human) SayHi() {
+	fmt.Printf("Hi, I am %s you can call me on %s\n", h.name, h.phone)
+}
+func testInherit() {
+	mark := &Student{Human{"hongyuqin", 27, "13640944902"}, "szu"}
+	nick := &Employee{Human{"hongyibei", 23, "13223311234"}, "hedian"}
+	mark.SayHi()
+	nick.SayHi()
+
+}
+
+//17.channel的关闭和range的使用
+func fibonacci(n int, c chan int) {
+	x, y := 1, 1
+	for i := 0; i < n; i++ {
+		c <- x
+		x, y = y, x+y
+	}
+	close(c)
+}
+func testFib() {
+	c := make(chan int, 10)
+	go fibonacci(cap(c), c)
+	for i := range c {
+		fmt.Println(i)
+	}
+}
+func testParseTime() {
+	endTimeStr := "2019-05-01 12:22:22"
+	endTime, err := time.Parse("2006-01-02 15:04:05", endTimeStr)
+	if err != nil {
+		fmt.Println("endTime is :", endTime)
+	}
+	fmt.Println("time is :", endTime)
+}
+
+//18.nil错误判断相等
+type SyntaxError struct {
+	msg    string // 错误描述
+	Offset int64  // 错误发生的位置
+}
+
+func (e *SyntaxError) Error() string { return e.msg }
+func returnsError() error {
+	var p *SyntaxError = nil
+	return p // Will always return a non-nil error.
+}
+func testError() {
+	if err := returnsError(); err != nil {
+		fmt.Println("奇了个怪")
+	}
 }
 func main() {
-	testAssert()
+	testError()
+	//testParseTime()
+	//testFib()
+	//testInherit()
+	//testAssert()
 	//13
 	//testReflect2()
 	//testChannelVal()

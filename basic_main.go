@@ -74,7 +74,7 @@ func findCpuNum() {
 	fmt.Print(cpuNum)
 }
 
-//?? 指针为什么也不变
+//?? 指针为什么也不变xxxx 有的
 func (p *Person) doSth() {
 	str := "hongmin"
 	p.name = str
@@ -265,8 +265,12 @@ func testReader() {
 	}
 }
 func main() {
+	//测试下指针作为接收参数
+	p := &Person{"hongyuqin"}
+	p.doSth()
+	fmt.Println(p)
 	//测试反射
-	TestReflect()
+	//TestReflect()
 	//testReader()
 	//testPointerReceiver()
 	//testNilMap()
