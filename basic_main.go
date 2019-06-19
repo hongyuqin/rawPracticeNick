@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha256"
 	"fmt"
 	"io"
 	"math"
@@ -264,11 +265,22 @@ func testReader() {
 		}
 	}
 }
+
+//测试加密
+func encryptHmac256(tokenStr string) string {
+	h := sha256.New()
+	h.Write([]byte(tokenStr))
+	signatureByte := h.Sum(nil)
+	signatureStr := fmt.Sprintf("%x", signatureByte)
+	signatureStrUpper := strings.ToUpper(signatureStr)
+	return signatureStrUpper
+}
 func main() {
+	//fmt.Println(encryptHmac256("20181115Royce"))
 	//测试下指针作为接收参数
-	p := &Person{"hongyuqin"}
+	/*p := &Person{"hongyuqin"}
 	p.doSth()
-	fmt.Println(p)
+	fmt.Println(p)*/
 	//测试反射
 	//TestReflect()
 	//testReader()
