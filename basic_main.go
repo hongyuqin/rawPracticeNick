@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"crypto/sha256"
 	"fmt"
 	"io"
@@ -275,7 +276,48 @@ func encryptHmac256(tokenStr string) string {
 	signatureStrUpper := strings.ToUpper(signatureStr)
 	return signatureStrUpper
 }
+
+//测试ToString
+type retryParam struct {
+	SourcePlatForm string
+	RetryStatus    string
+	RetryNum       int32
+	Limit          int32
+}
+
+func (this *retryParam) String() string {
+	return "SourcePlatForm:" + this.SourcePlatForm + ",RetryStatus:" + this.RetryStatus + ",RetryNum:" + string(this.RetryNum) + ",Limit:" + string(this.Limit)
+}
+
+//测试多个defer会不会执行
+func testMultiDefer() {
+	fmt.Println("testMultiDefer")
+	HandlePanic(nil, func() {
+		defer func() {
+			if err := recover(); err != nil {
+				fmt.Println("painc111")
+			}
+		}()
+		fmt.Println("hello world")
+
+		panic("panic 了")
+	})
+
+}
+func HandlePanic(ctx context.Context, f func()) {
+	defer func() {
+		if err := recover(); err != nil {
+			fmt.Println("panic222")
+		}
+	}()
+	f()
+}
 func main() {
+	//测试多个defer
+	testMultiDefer()
+	time.Sleep(time.Second)
+	/*rp := &retryParam{SourcePlatForm:"dsfdfs"}
+	fmt.Println(rp)*/
 	//fmt.Println(encryptHmac256("20181115Royce"))
 	//测试下指针作为接收参数
 	/*p := &Person{"hongyuqin"}

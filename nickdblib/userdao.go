@@ -18,7 +18,7 @@ type User struct {
 var DB *sql.DB
 
 func InitDB() {
-	dbMain, err := sql.Open("mysql", "root:hongyuqin@/mydb")
+	dbMain, err := sql.Open("mysql", "root:hongyuqin@/klerpdb")
 	if err != nil {
 		log.Fatalf("Open database error: %s\n", err)
 	}
@@ -34,7 +34,7 @@ func InitDB() {
 //1.1 查找：根据id查找一个用户
 func FindUserById(id int) (*User, error) {
 	log.Println("FindUserById : ", id)
-	row := DB.QueryRow("select id,password,status,name from users where id = ?", id)
+	row := DB.QueryRow(`select id,IFNULL(password,""),IFNULL(status,0),IFNULL(name,"") from users where id = ?`, id)
 	var user User
 	var name, password string
 	var status int

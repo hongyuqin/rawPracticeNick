@@ -81,9 +81,9 @@ type T struct {
 
 func main() {
 	//5.
-	t := T{Name: "example", Port: 6666}
+	/*t := T{Name: "example", Port: 6666}
 	fmt.Printf("t %+v\n", t)
-
+	*/
 	recoverTest()
 	//1.str->int
 	//a,_ := strconv.Atoi("")
