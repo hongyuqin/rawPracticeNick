@@ -1,7 +1,7 @@
 package main
 
 import (
-	"../rawPracticeNick/core"
+	"./core"
 	"encoding/json"
 	"io"
 	"net/http"
