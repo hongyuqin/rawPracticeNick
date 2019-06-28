@@ -312,10 +312,19 @@ func HandlePanic(ctx context.Context, f func()) {
 	}()
 	f()
 }
+
 func main() {
+	//"{\"ref_no\":\"20190620001\",\"success\":true,\"data\":[]}"
+	/*arr := make([] int,10)
+	arr[0] = 1
+	arr[1] = 10
+	fmt.Println(fmt.Sprintf("%s",arr))*/
+	/*var bytes []byte = nil
+	fmt.Println(string(bytes))
+	fmt.Println("hello world")*/
 	//测试多个defer
-	testMultiDefer()
-	time.Sleep(time.Second)
+	/*testMultiDefer()
+	time.Sleep(time.Second)*/
 	/*rp := &retryParam{SourcePlatForm:"dsfdfs"}
 	fmt.Println(rp)*/
 	//fmt.Println(encryptHmac256("20181115Royce"))
