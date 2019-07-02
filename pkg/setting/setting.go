@@ -23,6 +23,7 @@ func SetUp() {
 		log.Fatalf("setting.Setup, fail to parse 'conf/app.ini': %v", err)
 	}
 	mapTo("app", AppSetting)
+	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
 }
 
@@ -68,3 +69,13 @@ type Server struct {
 }
 
 var ServerSetting = &Server{}
+
+type Redis struct {
+	Host        string
+	Password    string
+	MaxIdle     int
+	MaxActive   int
+	IdleTimeout time.Duration
+}
+
+var RedisSetting = &Redis{}

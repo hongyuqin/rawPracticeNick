@@ -1,10 +1,10 @@
 package api
 
 import (
-	"../../pkg/app"
-	"../../pkg/e"
 	"github.com/gin-gonic/gin"
 	"net/http"
+	"rawPraticeNick/pkg/app"
+	"rawPraticeNick/pkg/e"
 )
 
 func GetArticle(c *gin.Context) {
