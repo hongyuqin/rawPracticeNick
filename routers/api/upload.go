@@ -1,25 +1,34 @@
 package api
 
 import (
-	"github.com/EDDYCJY/go-gin-example/pkg/logging"
-	"github.com/EDDYCJY/go-gin-example/pkg/upload"
+	"fmt"
 	"github.com/gin-gonic/gin"
+	"log"
 	"net/http"
-	"rawPraticeNick/pkg/app"
-	"rawPraticeNick/pkg/e"
 )
 
-func UploadImage(c *gin.Context) {
+func UploadFile(c *gin.Context) {
+	// single file
+	file, _ := c.FormFile("file")
+	log.Println(file.Filename)
+
+	// Upload the file to specific dst.
+	// c.SaveUploadedFile(file, dst)
+
+	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
+}
+
+/*func UploadImage(c *gin.Context) {
 	appG := app.Gin{C: c}
 	file, image, err := c.Request.FormFile("image")
 	if err != nil {
-		logging.Warn(err)
+		log.Println(err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
 
 	if image == nil {
-		appG.Response(http.StatusBadRequest, e.INVALID_PARAMS, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR, nil)
 		return
 	}
 
@@ -29,20 +38,20 @@ func UploadImage(c *gin.Context) {
 	src := fullPath + imageName
 
 	if !upload.CheckImageExt(imageName) || !upload.CheckImageSize(file) {
-		appG.Response(http.StatusBadRequest, e.ERROR_UPLOAD_CHECK_IMAGE_FORMAT, nil)
+		appG.Response(http.StatusBadRequest, e.ERROR, nil)
 		return
 	}
 
 	err = upload.CheckImage(fullPath)
 	if err != nil {
-		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR_UPLOAD_CHECK_IMAGE_FAIL, nil)
+		log.Println(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
 
 	if err := c.SaveUploadedFile(image, src); err != nil {
-		logging.Warn(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR_UPLOAD_SAVE_IMAGE_FAIL, nil)
+		log.Println(err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
 
@@ -51,3 +60,4 @@ func UploadImage(c *gin.Context) {
 		"image_save_url": savePath + imageName,
 	})
 }
+*/

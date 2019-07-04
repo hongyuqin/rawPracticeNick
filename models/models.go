@@ -1,14 +1,22 @@
 package models
 
 import (
-	"../pkg/setting"
 	"fmt"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
+	"rawPraticeNick/pkg/setting"
+	"time"
 )
 
 var db *gorm.DB
+
+type Model struct {
+	ID         int       `gorm:"primary_key" json:"id"`
+	CreateTime time.Time `json:"create_time"`
+	UpdateTime time.Time `json:"update_time"`
+	Flag       int       `json:"flag"`
+}
 
 func Setup() {
 	var err error

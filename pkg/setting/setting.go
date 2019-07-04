@@ -1,6 +1,7 @@
 package setting
 
 import (
+	"fmt"
 	"github.com/go-ini/ini"
 	"log"
 	"time"
@@ -25,6 +26,8 @@ func SetUp() {
 	mapTo("app", AppSetting)
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
+	fmt.Println(ServerSetting.RunMode)
+	fmt.Println(DatabaseSetting.User)
 }
 
 type Database struct {
