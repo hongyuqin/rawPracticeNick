@@ -2,9 +2,9 @@ package main
 
 import (
 	"fmt"
-	"rawPraticeNick/models"
-	"rawPraticeNick/pkg/setting"
-	"rawPraticeNick/routers"
+	"rawPracticeNick/models"
+	"rawPracticeNick/pkg/setting"
+	"rawPracticeNick/routers"
 )
 
 func init() {

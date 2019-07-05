@@ -3,7 +3,7 @@ package gredis
 import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
-	"rawPraticeNick/pkg/setting"
+	"rawPracticeNick/pkg/setting"
 	"time"
 )
 

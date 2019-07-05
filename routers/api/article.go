@@ -3,8 +3,8 @@ package api
 import (
 	"github.com/gin-gonic/gin"
 	"net/http"
-	"rawPraticeNick/pkg/app"
-	"rawPraticeNick/pkg/e"
+	"rawPracticeNick/pkg/app"
+	"rawPracticeNick/pkg/e"
 )
 
 func GetArticle(c *gin.Context) {

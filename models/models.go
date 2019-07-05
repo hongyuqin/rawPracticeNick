@@ -5,7 +5,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"log"
-	"rawPraticeNick/pkg/setting"
+	"rawPracticeNick/pkg/setting"
 	"time"
 )
 
