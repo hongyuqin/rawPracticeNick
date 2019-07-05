@@ -1,7 +1,7 @@
 2019-07-05
 gg 1.更新 create table
-2.更新 pojo
-3.写db操作
+gg 2.更新 pojo
+gg 3.写db操作
 4.日志处理
 5.写统一鉴权
 6.写router
