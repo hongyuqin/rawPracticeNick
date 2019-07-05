@@ -1,13 +1,14 @@
 package main
 
 import (
-	"fmt"
-	"github.com/tealeg/xlsx"
+	log "github.com/sirupsen/logrus"
 	"os"
 )
 
 func main() {
-	xlsx, err := xlsx.OpenFile("./Workbook.xlsx")
+	log.SetOutput(os.Stdout)
+	log.Info("main ")
+	/*xlsx, err := xlsx.OpenFile("./Workbook.xlsx")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -20,5 +21,5 @@ func main() {
 				fmt.Printf("%s\n", text)
 			}
 		}
-	}
+	}*/
 }

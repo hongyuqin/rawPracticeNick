@@ -1,8 +1,10 @@
 package setting
 
 import (
+	"fmt"
 	"github.com/go-ini/ini"
-	"log"
+	log "github.com/sirupsen/logrus"
+	"os"
 	"time"
 )
 
@@ -16,6 +18,19 @@ func mapTo(section string, v interface{}) {
 	}
 }
 
+type MyTextFormatter struct {
+}
+
+func (f MyTextFormatter) Format(entry *log.Entry) ([]byte, error) {
+	timeStr := entry.Time.Format(time.RFC3339)
+	str := fmt.Sprintf("%s[%s] %s\n", timeStr, entry.Level.String(), entry.Message)
+	return []byte(str), nil
+}
+func setUpLog() {
+	log.SetFormatter(&MyTextFormatter{})
+	log.SetOutput(os.Stdout)
+	log.SetLevel(log.DebugLevel)
+}
 func SetUp() {
 	var err error
 	cfg, err = ini.Load("conf/app.ini")
@@ -25,9 +40,9 @@ func SetUp() {
 	mapTo("app", AppSetting)
 	mapTo("server", ServerSetting)
 	mapTo("database", DatabaseSetting)
+	mapTo("redis", RedisSetting)
 	mapTo("wechat", WeChatSetting)
-	/*fmt.Println(ServerSetting.RunMode)
-	fmt.Println(DatabaseSetting.User)*/
+	setUpLog()
 }
 
 type Database struct {
