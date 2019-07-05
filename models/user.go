@@ -2,11 +2,15 @@ package models
 
 type User struct {
 	Model
-	UserName     string `json:"username"`
-	PassWord     string `json:"password"`
-	HasLearnNum  int    `json:"has_learn_num"`
-	DailyNeedNum int    `json:"daily_need_num"`
-	OpenId       string `json:"open_id"`
+	UserName       string `json:"username"`
+	PassWord       string `json:"password"`
+	OpenId         string `json:"open_id"`
+	HasLearnNum    int    `json:"has_learn_num"`
+	DailyNeedNum   int    `json:"daily_need_num"`
+	AnswerDuration int    `json:"answer_duration"`
+	PracticeDays   int    `json:"practice_days"`
+	PracticeTime   int    `json:"practice_time"`
+	AnswerNum      int    `json:"answer_num"`
 }
 
 func AddUser(user User) error {

@@ -1,0 +1,67 @@
+  用户表
+    用户名 密码 openId 已学题目 每日需刷题数量 答题时长 练习天数 创建练习次数 答题量
+  题目表
+    题目内容 选项a、b、c、d 答案 解析 做错数量 做对数量 时间轴 要素轴
+  用户成绩表
+    用户id 分数
+  题目评论表
+    题目id 用户id 评论内容
+
+CREATE TABLE `user` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `username` varchar(50) DEFAULT '' COMMENT '用户名',
+  `password` varchar(50) DEFAULT '' COMMENT '密码',
+  `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
+  `has_learn_num` int(10) DEFAULT 0 COMMENT '已学题目',
+  `daily_need_num` int(10) DEFAULT 0 COMMENT '每日需刷题数量',
+  `answer_duration` int(10) DEFAULT 0 COMMENT '答题时长 分钟',
+  `practice_days` int(10) DEFAULT 0 COMMENT '练习天数',
+  `practice_time` int(10) DEFAULT 0 COMMENT '创建练习次数',
+  `answer_num` int(10) DEFAULT 0 COMMENT '答题量',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`),
+  KEY `idx_open_id` (`open_id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户表';
+
+CREATE TABLE `topic` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `topic_name` varchar(200) DEFAULT '' COMMENT '题目名字',
+  `option_a` varchar(200) DEFAULT '' COMMENT '选项A',
+  `option_b` varchar(200) DEFAULT '' COMMENT '选项B',
+  `option_c` varchar(200) DEFAULT '' COMMENT '选项C',
+  `option_d` varchar(200) DEFAULT '' COMMENT '选项D',
+  `answer` varchar(3) DEFAULT '' COMMENT '答案',
+  `topic_analysis` varchar(300) DEFAULT '' COMMENT '题目解析',
+  `wrong_num` int(10) DEFAULT 0 COMMENT '做错数量',
+  `right_num` int(10) DEFAULT 0 COMMENT '做对数量',
+  `belong_time_type` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '时间轴类型',
+  `element_type` varchar(10) DEFAULT '' COMMENT '要素轴类型',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '题目表';
+
+CREATE TABLE `score` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `customer_id` int(10) DEFAULT 0 COMMENT '用户id',
+  `score` int(10) DEFAULT 0 COMMENT '分数',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户成绩表';
+
+CREATE TABLE `comment` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `topic_id` int(10) DEFAULT 0 COMMENT '题目id',
+  `customer_id` int(10) DEFAULT 0 COMMENT '用户id',
+  `comment_content` varchar(300) DEFAULT '' COMMENT '评论内容',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户评论表';
+
