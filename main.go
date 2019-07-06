@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"github.com/sirupsen/logrus"
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/gredis"
 	"rawPracticeNick/pkg/setting"
@@ -11,7 +12,9 @@ import (
 func init() {
 	setting.SetUp()
 	models.Setup()
-	gredis.Setup()
+	if err := gredis.Setup(); err != nil {
+		logrus.Panic("redis init error")
+	}
 }
 func main() {
 	r := routers.InitRouter()

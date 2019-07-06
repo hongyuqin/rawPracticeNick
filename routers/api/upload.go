@@ -1,63 +1,102 @@
 package api
 
 import (
+	"bytes"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"log"
+	"github.com/sirupsen/logrus"
+	"github.com/unidoc/unioffice/document"
 	"net/http"
+	"rawPracticeNick/models"
+	"rawPracticeNick/pkg/app"
+	"rawPracticeNick/pkg/e"
+	"rawPracticeNick/pkg/setting"
+	"strings"
 )
 
 func UploadFile(c *gin.Context) {
+	appG := app.Gin{C: c}
 	// single file
 	file, _ := c.FormFile("file")
-	log.Println(file.Filename)
-
+	logrus.Info("file name is :", file.Filename)
+	dst := setting.AppSetting.FileSavePath + file.Filename
 	// Upload the file to specific dst.
-	// c.SaveUploadedFile(file, dst)
-
-	c.String(http.StatusOK, fmt.Sprintf("'%s' uploaded!", file.Filename))
-}
-
-/*func UploadImage(c *gin.Context) {
-	appG := app.Gin{C: c}
-	file, image, err := c.Request.FormFile("image")
+	err := c.SaveUploadedFile(file, dst)
+	//1.保存文件
 	if err != nil {
-		log.Println(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		logrus.Error("save uploaded file fail :", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
-
-	if image == nil {
-		appG.Response(http.StatusBadRequest, e.ERROR, nil)
-		return
-	}
-
-	imageName := upload.GetImageName(image.Filename)
-	fullPath := upload.GetImageFullPath()
-	savePath := upload.GetImagePath()
-	src := fullPath + imageName
-
-	if !upload.CheckImageExt(imageName) || !upload.CheckImageSize(file) {
-		appG.Response(http.StatusBadRequest, e.ERROR, nil)
-		return
-	}
-
-	err = upload.CheckImage(fullPath)
+	//2.读取文件
+	doc, err := document.Open(dst)
 	if err != nil {
-		log.Println(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		logrus.Error("error opening document: ", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
+	//全部输出到一个buffer里面
+	buf := bytes.NewBuffer([]byte{})
 
-	if err := c.SaveUploadedFile(image, src); err != nil {
-		log.Println(err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
-		return
+	i := 2
+	str := fmt.Sprintf("%d.", i)
+	for _, para := range doc.Paragraphs() {
+		for _, run := range para.Runs() {
+			//logrus.Info(run.Text())
+			line := run.Text()
+			if strings.HasPrefix(line, str) {
+				//可以解析这个buffer了
+				topic, err := analysisBuf(buf.Bytes())
+				if err != nil {
+					logrus.Error("analysis fail :", err)
+					appG.Response(http.StatusOK, e.ERROR, nil)
+					return
+				}
+				logrus.Info("topic is :", topic)
+				buf.Reset()
+				i++
+				str = fmt.Sprintf("%d.", i)
+			}
+			buf.Write([]byte(run.Text()))
+		}
 	}
 
-	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
-		"image_url":      upload.GetImageFullUrl(imageName),
-		"image_save_url": savePath + imageName,
-	})
+	appG.Response(http.StatusOK, e.SUCCESS, fmt.Sprintf("'%s' uploaded!", file.Filename))
 }
-*/
+func analysisBuf(byteBuf []byte) (topic *models.Topic, err error) {
+	logrus.Info("analysisBuf :", string(byteBuf))
+	bufStr := string(byteBuf)
+
+	topicBegin := 2
+	topicEnd := strings.Index(bufStr, "A.")
+	optionABegin := strings.Index(bufStr, "A.") + 3
+	optionAEnd := strings.Index(bufStr, "B.")
+	optionBBegin := strings.Index(bufStr, "B.") + 3
+	optionBEnd := strings.Index(bufStr, "C.")
+	optionCBegin := strings.Index(bufStr, "C.") + 3
+	optionCEnd := strings.Index(bufStr, "D.")
+	optionDBegin := strings.Index(bufStr, "D.") + 3
+	optionDEnd := strings.Index(bufStr, "【答案")
+	answerBegin := strings.Index(bufStr, "【答案") + 12
+	answerEnd := strings.Index(bufStr, "【解析】")
+	analysisBegin := strings.Index(bufStr, "【解析】") + 12
+	analysisEnd := len(bufStr)
+	topicName := bufStr[topicBegin:topicEnd]
+	optionA := bufStr[optionABegin:optionAEnd]
+	optionB := bufStr[optionBBegin:optionBEnd]
+	optionC := bufStr[optionCBegin:optionCEnd]
+	optionD := bufStr[optionDBegin:optionDEnd]
+	answer := strings.TrimSpace(bufStr[answerBegin:answerEnd])
+	analysis := bufStr[analysisBegin:analysisEnd]
+	topic = &models.Topic{
+		TopicName:     topicName,
+		OptionA:       optionA,
+		OptionB:       optionB,
+		OptionC:       optionC,
+		OptionD:       optionD,
+		Answer:        answer,
+		TopicAnalysis: analysis,
+	}
+	err = models.AddTopic(topic)
+	return
+}

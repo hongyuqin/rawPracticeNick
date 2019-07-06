@@ -3,7 +3,7 @@ package gredis
 import (
 	"encoding/json"
 	"github.com/gomodule/redigo/redis"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
 	"rawPracticeNick/pkg/setting"
 	"time"
 )
@@ -12,7 +12,7 @@ var RedisConn *redis.Pool
 
 // Setup Initialize the Redis instance
 func Setup() error {
-	log.Info("Setup is :", setting.RedisSetting.Host)
+	logrus.Info("Setup is :", setting.RedisSetting.Host)
 	RedisConn = &redis.Pool{
 		MaxIdle:     setting.RedisSetting.MaxIdle,
 		MaxActive:   setting.RedisSetting.MaxActive,

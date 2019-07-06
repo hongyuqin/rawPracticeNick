@@ -27,16 +27,15 @@ CREATE TABLE `user` (
 
 CREATE TABLE `topic` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `topic_name` varchar(200) DEFAULT '' COMMENT '题目名字',
+  `topic_name` varchar(500) DEFAULT '' COMMENT '题目名字',
   `option_a` varchar(200) DEFAULT '' COMMENT '选项A',
   `option_b` varchar(200) DEFAULT '' COMMENT '选项B',
   `option_c` varchar(200) DEFAULT '' COMMENT '选项C',
   `option_d` varchar(200) DEFAULT '' COMMENT '选项D',
   `answer` varchar(3) DEFAULT '' COMMENT '答案',
-  `topic_analysis` varchar(300) DEFAULT '' COMMENT '题目解析',
+  `topic_analysis` varchar(500) DEFAULT '' COMMENT '题目解析',
   `wrong_num` int(10) DEFAULT 0 COMMENT '做错数量',
   `right_num` int(10) DEFAULT 0 COMMENT '做对数量',
-  `belong_time_type` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '时间轴类型',
   `element_type` varchar(10) DEFAULT '' COMMENT '要素轴类型',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',

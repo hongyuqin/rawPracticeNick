@@ -3,7 +3,8 @@ package setting
 import (
 	"fmt"
 	"github.com/go-ini/ini"
-	log "github.com/sirupsen/logrus"
+	"github.com/sirupsen/logrus"
+	"log"
 	"os"
 	"time"
 )
@@ -14,22 +15,22 @@ var cfg *ini.File
 func mapTo(section string, v interface{}) {
 	err := cfg.Section(section).MapTo(v)
 	if err != nil {
-		log.Fatalf("Cfg.MapTo RedisSetting err: %v", err)
+		logrus.Fatalf("Cfg.MapTo RedisSetting err: %v", err)
 	}
 }
 
 type MyTextFormatter struct {
 }
 
-func (f MyTextFormatter) Format(entry *log.Entry) ([]byte, error) {
+func (f MyTextFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	timeStr := entry.Time.Format(time.RFC3339)
 	str := fmt.Sprintf("%s[%s] %s\n", timeStr, entry.Level.String(), entry.Message)
 	return []byte(str), nil
 }
 func setUpLog() {
-	log.SetFormatter(&MyTextFormatter{})
-	log.SetOutput(os.Stdout)
-	log.SetLevel(log.DebugLevel)
+	logrus.SetFormatter(&MyTextFormatter{})
+	logrus.SetOutput(os.Stdout)
+	logrus.SetLevel(logrus.DebugLevel)
 }
 func SetUp() {
 	var err error
@@ -57,24 +58,7 @@ type Database struct {
 var DatabaseSetting = &Database{}
 
 type App struct {
-	JwtSecret string
-	PageSize  int
-	PrefixUrl string
-
-	RuntimeRootPath string
-
-	ImageSavePath  string
-	ImageMaxSize   int
-	ImageAllowExts []string
-
-	ExportSavePath string
-	QrCodeSavePath string
-	FontSavePath   string
-
-	LogSavePath string
-	LogSaveName string
-	LogFileExt  string
-	TimeFormat  string
+	FileSavePath string
 }
 
 var AppSetting = &App{}
