@@ -1,0 +1,2 @@
+1.models层  假如没有createTime怎么保存.gorm怎么允许为空
+2.

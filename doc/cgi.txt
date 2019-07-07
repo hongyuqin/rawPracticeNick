@@ -1,0 +1,107 @@
+1.首页
+url:/home
+请求方式：GET
+请求参数：openToken=xxx
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data": {
+     	"rank":10,//排名
+     	"total":100,//总人数
+    	"left_days":,//考试剩余天数
+    	"daily_need_num":,//每日需刷题数量
+    	"today_practice_num":,//今日刷题数量 存redis
+    	"has_learn_num":,//已学数量
+    	"wrong_num":10,//做错数量 需复习数量
+    }
+}
+
+2.开始答题
+url:/beginAnswer
+请求方式:POST
+请求参数：
+{
+	//未知参数
+}
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+    	"exam_id":"xdsf" //此次考试的id
+    	"topic_name":"",
+    	"option_a":"",
+    	"option_b":"",
+    	"option_c":"",
+    	"option_d":"",
+    }
+ }
+
+3.提交答案
+功能：提交答案，显示正确答案和解析，还有正不正确
+url:/answer?exam_id=xx&topic_id=xx
+请求方式:GET
+请求参数：
+	exam_id  考试id
+	topic_id 题目id
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+    	"right":true,//答案正不正确
+    	"answer":"D",//答案
+    	"topic_analysis":""//解析
+    	"wrong_num":,//做错数量
+    	"right_num":,//作对数量
+    }
+}
+
+4.下一题
+url:/nextTopic?exam_id=xx&topic_id=xx
+请求方式：GET
+请求参数：
+	exam_id  考试id
+	topic_id 题目id 本题id
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+    	"exam_id":"xdsf" //此次考试的id
+    	"topic_name":"",
+    	"option_a":"",
+    	"option_b":"",
+    	"option_c":"",
+    	"option_d":"",
+    }
+}
+
+5.上一题
+url:/lastTopic?exam_id=xx&topic_id=xx
+其他：同上
+
+6.结束答题，交卷
+功能：交卷后，显示分数
+url:/submit?exam_id=xx
+请求方式：GET
+请求参数：
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+    	"score":90//分数
+    }
+}
+
+TODO:
+7.日历
+url:/calendar
+请求方式：GET
+请求参数：
+返回参数：
+
+
+

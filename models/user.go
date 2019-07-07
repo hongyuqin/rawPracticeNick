@@ -11,6 +11,7 @@ type User struct {
 	PracticeDays   int    `json:"practice_days"`
 	PracticeTime   int    `json:"practice_time"`
 	AnswerNum      int    `json:"answer_num"`
+	WrongNum       int    `json:"wrong_num"`
 }
 
 func AddUser(user User) error {
@@ -34,6 +35,13 @@ func SelectUserByOpenId(openId string) (*User, error) {
 		return nil, err
 	}
 	return &user, nil
+}
+func CountUser() (int, error) {
+	var count int
+	if err := db.Model(&User{}).Where("flag = 0").Count(&count).Error; err != nil {
+		return 0, err
+	}
+	return count, nil
 }
 func UpdateUser(user *User) error {
 	data := make(map[string]interface{})

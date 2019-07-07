@@ -18,6 +18,11 @@ func UploadFile(c *gin.Context) {
 	appG := app.Gin{C: c}
 	// single file
 	file, _ := c.FormFile("file")
+	if file == nil {
+		logrus.Error("file empty...")
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
 	logrus.Info("file name is :", file.Filename)
 	dst := setting.AppSetting.FileSavePath + file.Filename
 	// Upload the file to specific dst.
