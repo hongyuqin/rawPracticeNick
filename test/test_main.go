@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 )
 
 func testSplit() {
@@ -26,5 +27,9 @@ func main() {
 			}
 		}
 	}*/
-	testSplit()
+	//testSplit()
+	a, err := strconv.Atoi("")
+	if err != nil {
+		fmt.Println("a is :", a)
+	}
 }

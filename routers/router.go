@@ -14,5 +14,7 @@ func InitRouter() *gin.Engine {
 	r.GET("/getOpenId", api.GetOpenId)
 	//页面接口
 	r.GET("/home", api.HomePage)
+	//开始答题
+	r.GET("/beginAnswer", api.BeginAnswer)
 	return r
 }

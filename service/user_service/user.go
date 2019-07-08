@@ -19,7 +19,7 @@ const TODAY_PREFIX = "today_prefix_"
     	"wrong_num":10,//做错数量 需复习数量
 */
 type HomeDetail struct {
-	Rank             string `json:"topic_id"`
+	Rank             string `json:"rank"`
 	Total            int    `json:"total"`
 	LeftDays         int    `json:"left_days"`
 	TodayPracticeNum int    `json:"today_practice_num"`
@@ -29,9 +29,14 @@ type HomeDetail struct {
 }
 
 func Home(openId string) (*HomeDetail, error) {
+	user, err := models.SelectUserByOpenId(openId)
+	if err != nil {
+		logrus.Error("select user error :", err)
+		return nil, err
+	}
 	//TODO 1.获取排名
 	//2.获取总人数 TOTAL
-	count, err := models.CountUser()
+	count, err := models.CountUser(user.Region, user.ExamType)
 	if err != nil {
 		logrus.Error("count user error :", err)
 		return nil, err
@@ -41,7 +46,7 @@ func Home(openId string) (*HomeDetail, error) {
 	todayNumStr, err := gredis.Get(TODAY_PREFIX + openId)
 	if err != nil {
 		logrus.Error("redis Get error :", err)
-		return nil, err
+		todayNumStr = []byte("0")
 	}
 	todayNum, err := strconv.Atoi(string(todayNumStr))
 	if err != nil {
@@ -49,11 +54,6 @@ func Home(openId string) (*HomeDetail, error) {
 		return nil, err
 	}
 	//5.获取用户基本信息
-	user, err := models.SelectUserByOpenId(openId)
-	if err != nil {
-		logrus.Error("select user error :", err)
-		return nil, err
-	}
 
 	homeDetail := &HomeDetail{
 		Total:            count,

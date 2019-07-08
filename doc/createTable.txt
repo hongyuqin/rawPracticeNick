@@ -19,12 +19,16 @@ CREATE TABLE `user` (
   `practice_time` int(10) DEFAULT 0 COMMENT '创建练习次数',
   `answer_num` int(10) DEFAULT 0 COMMENT '答题量',
   `wrong_num` int(10) DEFAULT 0 COMMENT '做错数量',
+  `region` varchar(20) DEFAULT '' COMMENT '地域',
+  `exam_type` varchar(20) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`),
   KEY `idx_open_id` (`open_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户表';
+
+insert into table user (username,open_id,region,exam_type) values ('hongyuqin','xx','REGION_COUNTRY','EXAM_TYPE_CIVIL');
 
 CREATE TABLE `topic` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -37,7 +41,10 @@ CREATE TABLE `topic` (
   `topic_analysis` varchar(500) DEFAULT '' COMMENT '题目解析',
   `wrong_num` int(10) DEFAULT 0 COMMENT '做错数量',
   `right_num` int(10) DEFAULT 0 COMMENT '做对数量',
-  `element_type` varchar(10) DEFAULT '' COMMENT '要素轴类型',
+  `region` varchar(20) DEFAULT '' COMMENT '地域',
+  `exam_type` varchar(20) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
+  `element_type_one` varchar(10) DEFAULT '' COMMENT '要素轴类型第一层',
+  `element_type_two` varchar(10) DEFAULT '' COMMENT '要素轴类型第二层',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
@@ -46,7 +53,7 @@ CREATE TABLE `topic` (
 
 CREATE TABLE `score` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `customer_id` int(10) DEFAULT 0 COMMENT '用户id',
+  `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
   `score` int(10) DEFAULT 0 COMMENT '分数',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -57,11 +64,55 @@ CREATE TABLE `score` (
 CREATE TABLE `comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `topic_id` int(10) DEFAULT 0 COMMENT '题目id',
-  `customer_id` int(10) DEFAULT 0 COMMENT '用户id',
+   `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
   `comment_content` varchar(300) DEFAULT '' COMMENT '评论内容',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户评论表';
+
+CREATE TABLE `collect` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+   `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
+  `topic_id` int(10) DEFAULT 0 COMMENT '题目id',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户收藏题目表';
+
+ CREATE TABLE `wrong_topic` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+   `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
+  `topic_id` int(10) DEFAULT 0 COMMENT '题目id',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户错误题目表';
+
+ CREATE TABLE `done_topic` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+   `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
+  `topic_id` int(10) DEFAULT 0 COMMENT '题目id',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户已做题目表';
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

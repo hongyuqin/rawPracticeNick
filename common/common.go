@@ -1,0 +1,15 @@
+package common
+
+//地域选择 国家:REGION_COUNTRY 深圳:REGION_SZ
+const (
+	REGION_COUNTRY = "REGION_COUNTRY"
+	REGION_SZ      = "REGION_SZ"
+)
+
+//考试类型 公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION
+const (
+	EXAM_TYPE_CIVIL       = "EXAM_TYPE_CIVIL"
+	EXAM_TYPE_INSTITUTION = "EXAM_TYPE_INSTITUTION"
+)
+
+//还有两层分类

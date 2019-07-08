@@ -18,12 +18,9 @@ url:/home
 }
 
 2.开始答题
-url:/beginAnswer
-请求方式:POST
-请求参数：
-{
-	//未知参数
-}
+url:/beginAnswer?element_type_one=xx&element_type_two=xx
+请求方式:GET
+请求参数：element_type_one 要素轴第一层；element_type_two 要素轴第二层
 返回参数：
 {
     "code": 200,
@@ -52,9 +49,9 @@ url:/answer?exam_id=xx&topic_id=xx
     "data":{
     	"right":true,//答案正不正确
     	"answer":"D",//答案
-    	"topic_analysis":""//解析
+    	"topic_analysis":"",//解析
     	"wrong_num":,//做错数量
-    	"right_num":,//作对数量
+    	"right_num"://作对数量
     }
 }
 
@@ -96,12 +93,71 @@ url:/submit?exam_id=xx
     }
 }
 
+7.修改计划
+功能：通过此按钮调整——地域的选择（如国家，深圳，等后期再添加其他地方的题目）、参加考试的类型（如公务员考、事业单位考试）、今日刷题的数量。页面设计可以参考百词斩。
+url:/plan
+请求方式：POST
+请求参数：
+{
+    "region":"",//地域选择：国家、深圳
+    "exam_type":"",//参加考试类型：公务员考、事业单位考
+    "daily_need_num":,//每日需刷题数量
+}
+返回参数：
+{
+    "code": 200,
+    "msg": ""
+}
+
 TODO:
-7.日历
+8.日历
 url:/calendar
 请求方式：GET
 请求参数：
 返回参数：
+
+9.收藏题目
+功能：用户收藏题目后，记录到后台的收藏表
+url:/collect?topic_id=xx
+请求方式：GET
+请求参数：topic_id=xx
+返回参数：
+{
+    "code": 200,
+    "msg": ""
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

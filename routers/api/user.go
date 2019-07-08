@@ -34,7 +34,7 @@ func GetOpenId(c *gin.Context) {
 
 func HomePage(c *gin.Context) {
 	appG := app.Gin{C: c}
-	homeDetail, err := user_service.Home("xxx")
+	homeDetail, err := user_service.Home("xx")
 	if err != nil {
 		logrus.Error("Home error :", err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)

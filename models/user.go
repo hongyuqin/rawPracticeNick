@@ -12,6 +12,8 @@ type User struct {
 	PracticeTime   int    `json:"practice_time"`
 	AnswerNum      int    `json:"answer_num"`
 	WrongNum       int    `json:"wrong_num"`
+	Region         string `json:"region"`
+	ExamType       string `json:"exam_type"`
 }
 
 func AddUser(user User) error {
@@ -36,9 +38,9 @@ func SelectUserByOpenId(openId string) (*User, error) {
 	}
 	return &user, nil
 }
-func CountUser() (int, error) {
+func CountUser(region, examType string) (int, error) {
 	var count int
-	if err := db.Model(&User{}).Where("flag = 0").Count(&count).Error; err != nil {
+	if err := db.Model(&User{}).Where("region = ? AND exam_type = ? AND flag = 0", region, examType).Count(&count).Error; err != nil {
 		return 0, err
 	}
 	return count, nil

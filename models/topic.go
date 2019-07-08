@@ -4,16 +4,19 @@ import "time"
 
 type Topic struct {
 	Model
-	TopicName     string `json:"topic_name"`
-	OptionA       string `json:"option_a"`
-	OptionB       string `json:"option_b"`
-	OptionC       string `json:"option_c"`
-	OptionD       string `json:"option_d"`
-	Answer        string `json:"answer"`
-	TopicAnalysis string `json:"topic_analysis"`
-	WrongNum      int    `json:"wrong_num"`
-	RightNum      int    `json:"right_num"`
-	ElementType   string `json:"element_type"`
+	TopicName      string `json:"topic_name"`
+	OptionA        string `json:"option_a"`
+	OptionB        string `json:"option_b"`
+	OptionC        string `json:"option_c"`
+	OptionD        string `json:"option_d"`
+	Answer         string `json:"answer"`
+	TopicAnalysis  string `json:"topic_analysis"`
+	WrongNum       int    `json:"wrong_num"`
+	RightNum       int    `json:"right_num"`
+	Region         string `json:"region"`
+	ExamType       string `json:"exam_type"`
+	ElementTypeOne string `json:"element_type_one"`
+	ElementTypeTwo string `json:"element_type_two"`
 }
 
 func AddTopic(topic *Topic) error {
@@ -39,22 +42,19 @@ func GetTopics(topic *Topic) ([]Topic, error) {
 		err    error
 	)
 	data := make(map[string]interface{})
-	if topic.ElementType != "" {
-		data["element_type"] = topic.ElementType
+	if topic.Region != "" {
+		data["region"] = topic.Region
 	}
-	err = db.Where(topic).Find(topics).Error
+	if topic.ElementTypeOne != "" {
+		data["element_type_one"] = topic.ElementTypeOne
+	}
+	if topic.ElementTypeTwo != "" {
+		data["element_type_two"] = topic.ElementTypeTwo
+	}
+
+	err = db.Where(data).Find(&topics).Error
 	if err != nil {
 		return nil, err
 	}
 	return topics, nil
-}
-func UpdateTopic(topic *Topic) error {
-	data := make(map[string]interface{})
-	if topic.ElementType != "" {
-		data["element_type"] = topic.ElementType
-	}
-	if err := db.Model(&Topic{}).Where("id = ? AND flag = 0 ", topic.ID).Updates(data).Error; err != nil {
-		return err
-	}
-	return nil
 }

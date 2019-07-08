@@ -95,3 +95,34 @@ func Delete(key string) (bool, error) {
 
 	return redis.Bool(conn.Do("DEL", key))
 }
+
+// sadd a key
+func SAdd(key, value string) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SADD", key, value)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SRem(key, value string) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("SREM", key, value)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func SPop(key string) (int, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	return redis.Int(conn.Do("SPOP", key))
+
+}
