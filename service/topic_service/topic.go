@@ -55,3 +55,13 @@ func BeginAnswer(openId, region, elementTypeOne, elementTypeTwo string) (*Topic,
 		OptionD:   topic.OptionD,
 	}, nil
 }
+func Collect(openId string, topicId int) error {
+	if err := models.AddCollect(models.Collect{
+		OpenId:  openId,
+		TopicId: topicId,
+	}); err != nil {
+		logrus.Error("Collect error :", err)
+		return err
+	}
+	return nil
+}

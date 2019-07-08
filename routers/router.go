@@ -16,5 +16,9 @@ func InitRouter() *gin.Engine {
 	r.GET("/home", api.HomePage)
 	//开始答题
 	r.GET("/beginAnswer", api.BeginAnswer)
+	//9.收藏
+	r.GET("/collect", api.Collect)
+	//7.修改计划
+	r.GET("/plan", api.Plan)
 	return r
 }

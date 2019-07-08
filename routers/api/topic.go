@@ -7,6 +7,7 @@ import (
 	"rawPracticeNick/pkg/app"
 	"rawPracticeNick/pkg/e"
 	"rawPracticeNick/service/topic_service"
+	"strconv"
 )
 
 func BeginAnswer(c *gin.Context) {
@@ -20,4 +21,22 @@ func BeginAnswer(c *gin.Context) {
 	}
 
 	appG.Response(http.StatusOK, e.SUCCESS, topic)
+}
+
+func Collect(c *gin.Context) {
+	appG := app.Gin{C: c}
+	openId := c.Query("openId")
+	topicIdStr := c.Query("topic_id")
+	topicId, err := strconv.Atoi(topicIdStr)
+	if err != nil {
+		logrus.Error("no topic_id")
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+	if err = topic_service.Collect(openId, topicId); err != nil {
+		logrus.Error("collect error :", openId, topicId)
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }

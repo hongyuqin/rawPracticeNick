@@ -64,3 +64,15 @@ func Home(openId string) (*HomeDetail, error) {
 	}
 	return homeDetail, nil
 }
+func Plan(openId string, region string, examType string, dailyNeedNum int) error {
+	if err := models.UpdateUser(&models.User{
+		OpenId:       openId,
+		Region:       region,
+		ExamType:     examType,
+		DailyNeedNum: dailyNeedNum,
+	}); err != nil {
+		logrus.Error("updateUser error :", err)
+		return err
+	}
+	return nil
+}

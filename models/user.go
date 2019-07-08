@@ -66,7 +66,13 @@ func UpdateUser(user *User) error {
 	if user.AnswerNum > 0 {
 		data["answer_num"] = user.AnswerNum
 	}
-	if err := db.Model(&User{}).Where("id = ? AND flag = 0 ", user.ID).Updates(data).Error; err != nil {
+	if user.Region != "" {
+		data["region"] = user.Region
+	}
+	if user.ExamType != "" {
+		data["exam_type"] = user.ExamType
+	}
+	if err := db.Model(&User{}).Where("open_id = ? AND flag = 0 ", user.OpenId).Updates(data).Error; err != nil {
 		return err
 	}
 	return nil

@@ -9,6 +9,7 @@ import (
 	"rawPracticeNick/pkg/e"
 	"rawPracticeNick/pkg/util"
 	"rawPracticeNick/service/user_service"
+	"strconv"
 )
 
 func GetUser(c *gin.Context) {
@@ -41,4 +42,25 @@ func HomePage(c *gin.Context) {
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, homeDetail)
+}
+
+func Plan(c *gin.Context) {
+	appG := app.Gin{C: c}
+	openId := c.Query("openId")
+	region := c.Query("region")
+	examType := c.Query("exam_type")
+	dailyNeedNumStr := c.Query("daily_need_num")
+	dailyNeedNum, err := strconv.Atoi(dailyNeedNumStr)
+	if err != nil {
+		logrus.Error("dailyNeedNum trans error :", err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+	err = user_service.Plan(openId, region, examType, dailyNeedNum)
+	if err != nil {
+		logrus.Error("Plan error :", err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
