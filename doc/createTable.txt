@@ -29,6 +29,17 @@ CREATE TABLE `user` (
 
 insert into table user (username,open_id,region,exam_type) values ('hongyuqin','xx','REGION_COUNTRY','EXAM_TYPE_CIVIL');
 
+#目前只放用户要素轴的选择
+CREATE TABLE `setting` (
+  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+  `element_type_one` varchar(10) DEFAULT '' COMMENT '要素轴类型第一层',
+  `element_type_two` varchar(10) DEFAULT '' COMMENT '要素轴类型第二层',
+  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
+  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户设置表';
+
 CREATE TABLE `topic` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `topic_name` varchar(500) DEFAULT '' COMMENT '题目名字',
