@@ -6,7 +6,7 @@ type WrongTopic struct {
 	TopicId int    `json:"topic_id"`
 }
 
-func AddWrongTopic(wrongTopic *WrongTopic) error {
+func AddWrongTopic(wrongTopic WrongTopic) error {
 	//假如存在 就不插入，直接返回nil
 	var count int
 	err := db.Where("open_id = ? AND topic_id = ? ", wrongTopic.OpenId, wrongTopic.TopicId).Count(count).Error
@@ -44,4 +44,19 @@ func GetWrongTopics(openId string) ([]WrongTopic, error) {
 		return nil, err
 	}
 	return topics, nil
+}
+
+func GetWrongTopic(openId string) (*WrongTopic, error) {
+	var (
+		topic WrongTopic
+		err   error
+	)
+	data := make(map[string]interface{})
+	data["open_id"] = openId
+
+	err = db.Where(data).First(&topic).Error
+	if err != nil {
+		return nil, err
+	}
+	return &topic, nil
 }

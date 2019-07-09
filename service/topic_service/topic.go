@@ -3,7 +3,10 @@ package topic_service
 import (
 	"github.com/pkg/errors"
 	"github.com/sirupsen/logrus"
+	"rawPracticeNick/common"
 	"rawPracticeNick/models"
+	"rawPracticeNick/pkg/gredis"
+	"rawPracticeNick/pkg/util"
 )
 
 type Topic struct {
@@ -102,7 +105,7 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 		right = false
 		topic.WrongNum = topic.WrongNum + 1
 		//往用户错题表插入数据
-		if err = models.AddWrongTopic(&models.WrongTopic{
+		if err = models.AddWrongTopic(models.WrongTopic{
 			OpenId:  openId,
 			TopicId: topicId,
 		}); err != nil {
@@ -115,11 +118,21 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 		return nil, err
 	}
 	//3.往用户做过题表插入数据
-	if err = models.AddDoneTopic(&models.DoneTopic{
+	if err = models.AddDoneTopic(models.DoneTopic{
 		OpenId:  openId,
 		TopicId: topicId,
 	}); err != nil {
 		logrus.Error("AddDoneTopic error :", err)
+		return nil, err
+	}
+	//3-1 存一个今日已答题
+	if err = gredis.SAdd(common.TODAY_FINISH_PREFIX+openId, string(topicId)); err != nil {
+		logrus.Error("AddDoneTopic sadd error ", err)
+		return nil, err
+	}
+	//再设一个过期时间
+	if err = gredis.ExpireAt(common.TODAY_FINISH_PREFIX+openId, util.GetNextDayBegin()); err != nil {
+		logrus.Error("AddDoneTopic expireAt error ", err)
 		return nil, err
 	}
 

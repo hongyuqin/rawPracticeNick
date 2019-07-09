@@ -133,3 +133,13 @@ func SPop(key string) (int, error) {
 	return redis.Int(conn.Do("SPOP", key))
 
 }
+
+func ExpireAt(key string, expireMillSecond int64) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+	_, err := conn.Do("EXPIREAT", key, expireMillSecond)
+	if err != nil {
+		return err
+	}
+	return nil
+}

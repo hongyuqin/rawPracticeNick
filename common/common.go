@@ -15,3 +15,5 @@ const (
 //还有两层分类
 
 const OPENID_SET = "OPENID_SET"
+
+const TODAY_FINISH_PREFIX = "TODAY_FINISH_"

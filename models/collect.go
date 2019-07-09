@@ -13,11 +13,24 @@ func AddCollect(collect Collect) error {
 	return nil
 }
 
-func DelCollect(id int) error {
-	data := make(map[string]interface{})
-	data["id"] = id
-	if err := db.Delete(data).Error; err != nil {
+func DelCollect(topicId int, openId string) error {
+	if err := db.Where("topic_id = ? AND open_id = ?", topicId, openId).Delete(&Collect{}).Error; err != nil {
 		return err
 	}
 	return nil
+}
+
+func GetCollect(openId string) (*Collect, error) {
+	var (
+		collect Collect
+		err     error
+	)
+	data := make(map[string]interface{})
+	data["open_id"] = openId
+
+	err = db.Where(data).First(&collect).Error
+	if err != nil {
+		return nil, err
+	}
+	return &collect, nil
 }

@@ -18,6 +18,7 @@ url:/home
 }
 
 gg* 2.开始答题/下一题
+功能：把今天答得题存下来，有个今天刷题 需要展示
 url:/nextTopic
 请求方式：GET
 请求参数：
@@ -35,8 +36,44 @@ url:/nextTopic
     }
 }
 
+gg 3.下一道错题
+功能：做下一道错题
+url:/nextWrongTopic
+请求方式：GET
+请求参数：
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+        "topic_id":xx,
+    	"topic_name":"",
+    	"option_a":"",
+    	"option_b":"",
+    	"option_c":"",
+    	"option_d":"",
+    }
+}
 
-gg 3.提交答案
+gg 4.下一道收藏的题
+url:/nextCollect
+请求方式：GET
+请求参数：
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+        "topic_id":xx,
+    	"topic_name":"",
+    	"option_a":"",
+    	"option_b":"",
+    	"option_c":"",
+    	"option_d":"",
+    }
+}
+
+gg 5.提交答案
 功能：提交答案，显示正确答案和解析，还有正不正确
 url:/answer?topic_id=xx&my_answer=C
 请求方式:GET
@@ -57,7 +94,7 @@ url:/answer?topic_id=xx&my_answer=C
     }
 }
 
-4.设置要素轴
+6.设置要素轴
 
 gg 5.获取计划
 功能：点击修改计划，获取计划的信息
@@ -104,7 +141,15 @@ url:/collect?topic_id=xx
     "msg": ""
 }
 
-
+gg 9.取消收藏
+url:/cancelCollect?topic_id=xx
+请求方式：GET
+请求参数：topic_id=xx
+返回参数：
+{
+    "code": 200,
+    "msg": ""
+}
 
 
 

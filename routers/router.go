@@ -24,5 +24,12 @@ func InitRouter() *gin.Engine {
 	r.GET("/getPlan", api.GetPlan)
 	//7.提交答案
 	r.GET("/answer", api.Answer)
+	//8.下一道错题
+	r.GET("/nextWrongTopic", api.NextWrongTopic)
+	//9.下一道收藏的题
+	r.GET("/nextCollect", api.NextCollect)
+	//10.取消收藏
+	r.GET("/cancelCollect", api.CancelCollect)
+
 	return r
 }
