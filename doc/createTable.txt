@@ -81,6 +81,7 @@ CREATE TABLE `collect` (
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户收藏题目表';
+alter table collect add unique index(open_id,topic_id);
 
  CREATE TABLE `wrong_topic` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -91,6 +92,8 @@ CREATE TABLE `collect` (
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户错误题目表';
+alter table wrong_topic add unique index(open_id,topic_id);
+
 
  CREATE TABLE `done_topic` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -101,6 +104,7 @@ CREATE TABLE `collect` (
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户已做题目表';
+alter table done_topic add unique index(open_id,topic_id);
 
 
 

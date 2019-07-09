@@ -1,4 +1,4 @@
-1.首页
+gg 1.首页
 url:/home
 请求方式：GET
 请求参数：openToken=xxx
@@ -17,35 +17,38 @@ url:/home
     }
 }
 
-2.开始答题
-url:/beginAnswer?element_type_one=xx&element_type_two=xx
-请求方式:GET
-请求参数：element_type_one 要素轴第一层；element_type_two 要素轴第二层
+gg* 2.开始答题/下一题
+url:/nextTopic
+请求方式：GET
+请求参数：
 返回参数：
 {
     "code": 200,
     "msg": "",
     "data":{
+        "topic_id":xx,
     	"topic_name":"",
     	"option_a":"",
     	"option_b":"",
     	"option_c":"",
     	"option_d":"",
     }
- }
+}
 
-3.提交答案
+
+gg 3.提交答案
 功能：提交答案，显示正确答案和解析，还有正不正确
-url:/answer?exam_id=xx&topic_id=xx
+url:/answer?topic_id=xx&my_answer=C
 请求方式:GET
 请求参数：
-	exam_id  考试id
 	topic_id 题目id
+	my_answer 我的答案
 返回参数：
 {
     "code": 200,
     "msg": "",
     "data":{
+        "my_answer":"C",//我的答案
     	"right":true,//答案正不正确
     	"answer":"D",//答案
     	"topic_analysis":"",//解析
@@ -54,28 +57,24 @@ url:/answer?exam_id=xx&topic_id=xx
     }
 }
 
-4.下一题
-url:/nextTopic?exam_id=xx&topic_id=xx
+4.设置要素轴
+
+gg 5.获取计划
+功能：点击修改计划，获取计划的信息
+url:/getPlan
 请求方式：GET
-请求参数：
-	exam_id  考试id
-	topic_id 题目id 本题id
 返回参数：
 {
     "code": 200,
     "msg": "",
     "data":{
-    	"exam_id":"xdsf" //此次考试的id
-    	"topic_name":"",
-    	"option_a":"",
-    	"option_b":"",
-    	"option_c":"",
-    	"option_d":"",
+    	"region":"",//地域选择：国家、深圳
+        "exam_type":"",//参加考试类型：公务员考、事业单位考
+        "daily_need_num":,//每日需刷题数量
     }
 }
 
-
-gg 7.修改计划
+gg 6.修改计划
 功能：通过此按钮调整——地域的选择（如国家，深圳，等后期再添加其他地方的题目）、参加考试的类型（如公务员考、事业单位考试）、今日刷题的数量。页面设计可以参考百词斩。
 url:/plan?region=xx&exam_type=xx&daily_need_num=xx
 请求方式：GET
@@ -88,13 +87,13 @@ url:/plan?region=xx&exam_type=xx&daily_need_num=xx
 }
 
 TODO:
-8.日历
+7.日历
 url:/calendar
 请求方式：GET
 请求参数：
 返回参数：
 
-gg 9.收藏题目
+gg 8.收藏题目
 功能：用户收藏题目后，记录到后台的收藏表
 url:/collect?topic_id=xx
 请求方式：GET

@@ -58,3 +58,16 @@ func GetTopics(topic *Topic) ([]Topic, error) {
 	}
 	return topics, nil
 }
+func UpdateTopic(topic *Topic) error {
+	data := make(map[string]interface{})
+	if topic.WrongNum > 0 {
+		data["wrong_num"] = topic.WrongNum
+	}
+	if topic.RightNum > 0 {
+		data["right_num"] = topic.RightNum
+	}
+	if err := db.Model(&Topic{}).Where("id = ? AND flag = 0 ", topic.ID).Updates(data).Error; err != nil {
+		return err
+	}
+	return nil
+}

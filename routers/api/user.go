@@ -64,3 +64,19 @@ func Plan(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, nil)
 }
+
+func GetPlan(c *gin.Context) {
+	appG := app.Gin{C: c}
+	openId := c.Query("openId")
+	user, err := models.SelectUserByOpenId(openId)
+	if err != nil || user == nil {
+		logrus.Error("findUserByOpenId error :", err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+	data := make(map[string]interface{})
+	data["region"] = user.Region
+	data["exam_type"] = user.ExamType
+	data["daily_need_num"] = user.DailyNeedNum
+	appG.Response(http.StatusOK, e.SUCCESS, data)
+}
