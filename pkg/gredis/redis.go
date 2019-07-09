@@ -119,6 +119,13 @@ func SRem(key, value string) error {
 	return nil
 }
 
+func SIsmember(key, value string) (bool, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	return redis.Bool(conn.Do("SISMEMBER", key, value))
+}
+
 func SPop(key string) (int, error) {
 	conn := RedisConn.Get()
 	defer conn.Close()

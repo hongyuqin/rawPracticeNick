@@ -1,9 +1,10 @@
 package models
 
+import "time"
+
 type User struct {
 	Model
-	UserName       string `json:"username"`
-	PassWord       string `json:"password"`
+	UserName       string `json:"user_name"`
 	OpenId         string `json:"open_id"`
 	HasLearnNum    int    `json:"has_learn_num"`
 	DailyNeedNum   int    `json:"daily_need_num"`
@@ -17,6 +18,8 @@ type User struct {
 }
 
 func AddUser(user User) error {
+	user.CreateTime = time.Now()
+	user.UpdateTime = time.Now()
 	if err := db.Create(&user).Error; err != nil {
 		return err
 	}

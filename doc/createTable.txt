@@ -9,8 +9,7 @@
 
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `username` varchar(50) DEFAULT '' COMMENT '用户名',
-  `password` varchar(50) DEFAULT '' COMMENT '密码',
+  `user_name` varchar(50) DEFAULT '' COMMENT '用户名',
   `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
   `has_learn_num` int(10) DEFAULT 0 COMMENT '已学题目',
   `daily_need_num` int(10) DEFAULT 0 COMMENT '每日需刷题数量',
