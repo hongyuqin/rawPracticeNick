@@ -1,7 +1,7 @@
 package topic_service
 
 import (
-	"github.com/pkg/errors"
+	"errors"
 	"github.com/sirupsen/logrus"
 	"rawPracticeNick/common"
 	"rawPracticeNick/models"

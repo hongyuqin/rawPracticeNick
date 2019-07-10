@@ -26,7 +26,6 @@ gg 3.先做登录，拿到openId
 2019-07-08
 1.所有cgi
 2.做2个接口
-  beginAnswer -TODO
 
 3.了解下小程序上线流程
 
