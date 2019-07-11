@@ -15,7 +15,12 @@ func GetNextDayBegin() int64 {
 	tm1 := time.Date(t.Year(), t.Month(), t.Day(), 0, 0, 0, 0, t.Location())
 	return tm1.Unix()
 }
+func testInt() {
+	a := 100000
+	fmt.Println(string(a))
+}
 func main() {
+	testInt()
 	/*log.SetOutput(os.Stdout)
 	log.Info("main ")
 	xlsx, err := xlsx.OpenFile("./Workbook.xlsx")
@@ -37,5 +42,5 @@ func main() {
 	if err != nil {
 		fmt.Println("a is :", a)
 	}*/
-	fmt.Println(GetNextDayBegin())
+	//fmt.Println(GetNextDayBegin())
 }

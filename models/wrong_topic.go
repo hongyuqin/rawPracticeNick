@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type WrongTopic struct {
 	Model
 	OpenId  string `json:"open_id"`
@@ -9,23 +11,23 @@ type WrongTopic struct {
 func AddWrongTopic(wrongTopic WrongTopic) error {
 	//假如存在 就不插入，直接返回nil
 	var count int
-	err := db.Where("open_id = ? AND topic_id = ? ", wrongTopic.OpenId, wrongTopic.TopicId).Count(count).Error
+	err := db.Model(&WrongTopic{}).Where("open_id = ? AND topic_id = ? ", wrongTopic.OpenId, wrongTopic.TopicId).Count(&count).Error
 	if err != nil {
 		return err
 	}
 	if count == 1 {
 		return nil
 	}
+	wrongTopic.UpdateTime = time.Now()
+	wrongTopic.CreateTime = time.Now()
 	if err := db.Create(&wrongTopic).Error; err != nil {
 		return err
 	}
 	return nil
 }
 
-func DelWrongTopic(id int) error {
-	data := make(map[string]interface{})
-	data["id"] = id
-	if err := db.Model(&WrongTopic{}).Delete(data).Error; err != nil {
+func DelWrongTopic(wrongTopic WrongTopic) error {
+	if err := db.Where("open_id = ? AND topic_id = ?", wrongTopic.OpenId, wrongTopic.TopicId).Delete(&WrongTopic{}).Error; err != nil {
 		return err
 	}
 	return nil

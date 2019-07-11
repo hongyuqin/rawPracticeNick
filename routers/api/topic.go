@@ -14,7 +14,8 @@ import (
 
 func NextTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
-	topic, err := topic_service.NextTopic("xx")
+	openId := c.Query("openId")
+	topic, err := topic_service.NextTopic(openId)
 	if err != nil {
 		logrus.Error("NextTopic error :", err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
@@ -92,7 +93,7 @@ func Answer(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var decoder = schema.NewDecoder()
 	req := &AnswerReq{}
-	if err := decoder.Decode(&req, c.Request.URL.Query()); err != nil {
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
 		logrus.Error("decode error :", err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return

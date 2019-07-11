@@ -59,7 +59,10 @@ func GetOpenId(c *gin.Context) {
 			return
 		}
 		if err = models.AddUser(models.User{
-			OpenId: resp.OpenId,
+			OpenId:       resp.OpenId,
+			Region:       common.REGION_SZ,
+			ExamType:     common.EXAM_TYPE_CIVIL,
+			DailyNeedNum: 100,
 		}); err != nil {
 			logrus.Error("addUser error :", err)
 			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
@@ -75,7 +78,8 @@ func GetOpenId(c *gin.Context) {
 
 func HomePage(c *gin.Context) {
 	appG := app.Gin{C: c}
-	homeDetail, err := user_service.Home("xx")
+	openId := c.Query("openId")
+	homeDetail, err := user_service.Home(openId)
 	if err != nil {
 		logrus.Error("Home error :", err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)

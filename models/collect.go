@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Collect struct {
 	Model
 	OpenId  string `json:"open_id"`
@@ -7,6 +9,17 @@ type Collect struct {
 }
 
 func AddCollect(collect Collect) error {
+	//假如存在 就不插入，直接返回nil
+	var count int
+	err := db.Model(&Collect{}).Where("open_id = ? AND topic_id = ? ", collect.OpenId, collect.TopicId).Count(&count).Error
+	if err != nil {
+		return err
+	}
+	if count == 1 {
+		return nil
+	}
+	collect.UpdateTime = time.Now()
+	collect.CreateTime = time.Now()
 	if err := db.Create(&collect).Error; err != nil {
 		return err
 	}

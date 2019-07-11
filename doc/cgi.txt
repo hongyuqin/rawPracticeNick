@@ -96,7 +96,7 @@ url:/answer?topic_id=xx&my_answer=C
 
 6.设置要素轴
 
-gg 5.获取计划
+gg 7.获取计划
 功能：点击修改计划，获取计划的信息
 url:/getPlan
 请求方式：GET

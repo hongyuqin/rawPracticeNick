@@ -8,27 +8,27 @@ import (
 func InitRouter() *gin.Engine {
 	r := gin.New()
 	//测试接口
-	r.GET("/article", api.GetArticle)
+	/*r.GET("/article", api.GetArticle)
 	r.POST("/upload", api.UploadFile)
 	r.GET("/getUser", api.GetUser)
-	r.GET("/getOpenId", api.GetOpenId)
-	//页面接口
+	r.GET("/getOpenId", api.GetOpenId)*/
+	//1.首页
 	r.GET("/home", api.HomePage)
-	//开始答题
+	//2.开始答题/下一题
 	r.GET("/nextTopic", api.NextTopic)
-	//9.收藏
-	r.GET("/collect", api.Collect)
-	//7.修改计划
-	r.GET("/plan", api.Plan)
-	//6.获取计划
-	r.GET("/getPlan", api.GetPlan)
-	//7.提交答案
-	r.GET("/answer", api.Answer)
-	//8.下一道错题
+	//3.下一道错题
 	r.GET("/nextWrongTopic", api.NextWrongTopic)
-	//9.下一道收藏的题
+	//4.下一道收藏的题
 	r.GET("/nextCollect", api.NextCollect)
-	//10.取消收藏
+	//5.提交答案
+	r.GET("/answer", api.Answer)
+	//6.修改计划
+	r.GET("/plan", api.Plan)
+	//7.获取计划
+	r.GET("/getPlan", api.GetPlan)
+	//8.收藏题目
+	r.GET("/collect", api.Collect)
+	//9.取消收藏
 	r.GET("/cancelCollect", api.CancelCollect)
 
 	return r

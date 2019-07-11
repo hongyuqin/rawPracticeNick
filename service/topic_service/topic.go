@@ -67,6 +67,7 @@ func NextTopic(openId string) (*Topic, error) {
 	//3.把这两个值存到redis 未做的题目：已做的题目 随机抽一题出来
 
 	//4.过滤一下 就是要做的题目表
+	//biubiu: 因为放到map达到了随机的效果
 	for id := range allTopicsMap {
 		topic, err := models.GetTopic(id)
 		if err != nil {
@@ -101,6 +102,14 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 	right := true
 	if myAnswer == topic.Answer {
 		topic.RightNum = topic.RightNum + 1
+		//往用户错题表删除数据
+		if err = models.DelWrongTopic(models.WrongTopic{
+			OpenId:  openId,
+			TopicId: topicId,
+		}); err != nil {
+			logrus.Error("DelWrongTopic error :", err)
+			return nil, err
+		}
 	} else {
 		right = false
 		topic.WrongNum = topic.WrongNum + 1

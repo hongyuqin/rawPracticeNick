@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type DoneTopic struct {
 	Model
 	OpenId  string `json:"open_id"`
@@ -9,13 +11,15 @@ type DoneTopic struct {
 func AddDoneTopic(doneTopic DoneTopic) error {
 	//假如存在 就不插入，直接返回nil
 	var count int
-	err := db.Where("open_id = ? AND topic_id = ? ", doneTopic.OpenId, doneTopic.TopicId).Count(count).Error
+	err := db.Model(&DoneTopic{}).Where("open_id = ? AND topic_id = ? ", doneTopic.OpenId, doneTopic.TopicId).Count(&count).Error
 	if err != nil {
 		return err
 	}
 	if count == 1 {
 		return nil
 	}
+	doneTopic.UpdateTime = time.Now()
+	doneTopic.CreateTime = time.Now()
 	if err := db.Create(&doneTopic).Error; err != nil {
 		return err
 	}

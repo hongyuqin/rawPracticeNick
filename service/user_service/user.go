@@ -19,16 +19,17 @@ const TODAY_PREFIX = "today_prefix_"
     	"wrong_num":10,//做错数量 需复习数量
 */
 type HomeDetail struct {
-	Rank             string `json:"rank"`
-	Total            int    `json:"total"`
-	LeftDays         int    `json:"left_days"`
-	TodayPracticeNum int    `json:"today_practice_num"`
-	DailyNeedNum     int    `json:"daily_need_num"`
-	HasLearnNum      int    `json:"has_learn_num"`
-	WrongNum         int    `json:"wrong_num"`
+	Rank             int `json:"rank"`
+	Total            int `json:"total"`
+	LeftDays         int `json:"left_days"`
+	TodayPracticeNum int `json:"today_practice_num"`
+	DailyNeedNum     int `json:"daily_need_num"`
+	HasLearnNum      int `json:"has_learn_num"`
+	WrongNum         int `json:"wrong_num"`
 }
 
 func Home(openId string) (*HomeDetail, error) {
+	//0.获取用户基本信息
 	user, err := models.SelectUserByOpenId(openId)
 	if err != nil {
 		logrus.Error("select user error :", err)
@@ -53,7 +54,6 @@ func Home(openId string) (*HomeDetail, error) {
 		logrus.Error("Atoi error :", err)
 		return nil, err
 	}
-	//5.获取用户基本信息
 
 	homeDetail := &HomeDetail{
 		Total:            count,
