@@ -14,7 +14,7 @@ import (
 
 func NextTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	topic, err := topic_service.NextTopic(openId)
 	if err != nil {
 		logrus.Error("NextTopic error :", err)
@@ -26,10 +26,11 @@ func NextTopic(c *gin.Context) {
 
 func NextWrongTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
-	topic, err := topic_service.NextWrongTopic("xx")
+	openId := c.Query("accessToken")
+	topic, err := topic_service.NextWrongTopic(openId)
 	if err != nil {
 		logrus.Error("NextWrongTopic error :", err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR_NO_WRONG_TOPIC, nil)
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, topic)
@@ -37,10 +38,11 @@ func NextWrongTopic(c *gin.Context) {
 
 func NextCollect(c *gin.Context) {
 	appG := app.Gin{C: c}
-	topic, err := topic_service.NextCollect("xx")
+	openId := c.Query("accessToken")
+	topic, err := topic_service.NextCollect(openId)
 	if err != nil {
 		logrus.Error("NextCollect error :", err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR_NO_COLLECT, nil)
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, topic)
@@ -48,7 +50,7 @@ func NextCollect(c *gin.Context) {
 
 func Collect(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	topicIdStr := c.Query("topic_id")
 	topicId, err := strconv.Atoi(topicIdStr)
 	if err != nil {
@@ -66,7 +68,7 @@ func Collect(c *gin.Context) {
 
 func CancelCollect(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	topicIdStr := c.Query("topic_id")
 	topicId, err := strconv.Atoi(topicIdStr)
 	if err != nil {

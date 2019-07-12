@@ -1,7 +1,7 @@
 gg 1.首页
 url:/home
 请求方式：GET
-请求参数：openToken=xxx
+请求参数：accessToken=xxx
 返回参数：
 {
     "code": 200,

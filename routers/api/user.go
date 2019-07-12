@@ -17,7 +17,7 @@ import (
 
 func GetUser(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	user, err := models.SelectUserByOpenId(openId)
 	if err != nil {
 		logrus.Info("获取用户错误 :" + err.Error())
@@ -32,7 +32,7 @@ type Resp struct {
 	OpenId     string `json:"openid"`
 }
 
-func GetOpenId(c *gin.Context) {
+func GetAccessToken(c *gin.Context) {
 	appG := app.Gin{C: c}
 	jsCode := c.Query("code")
 	logrus.Info("jsCode is :", jsCode)
@@ -78,7 +78,7 @@ func GetOpenId(c *gin.Context) {
 
 func HomePage(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	homeDetail, err := user_service.Home(openId)
 	if err != nil {
 		logrus.Error("Home error :", err)
@@ -90,7 +90,7 @@ func HomePage(c *gin.Context) {
 
 func Plan(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	region := c.Query("region")
 	examType := c.Query("exam_type")
 	dailyNeedNumStr := c.Query("daily_need_num")
@@ -111,10 +111,10 @@ func Plan(c *gin.Context) {
 
 func GetPlan(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("openId")
+	openId := c.Query("accessToken")
 	user, err := models.SelectUserByOpenId(openId)
 	if err != nil || user == nil {
-		logrus.Error("findUserByOpenId error :", err)
+		logrus.Error("findUserByOpenId openId error :", openId, err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}

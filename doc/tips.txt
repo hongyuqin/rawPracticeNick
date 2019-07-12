@@ -8,3 +8,13 @@
 
 7.假设就以openId作为登录态
 8.排名 在做题量里面比较  根据计划里面的维度
+
+9.设置js里面的用于wxml的变量
+that.setData({
+    openId:resp.data["data"]["accessToken"]
+})
+10.
+更新页面：
+    var that = this
+    that.update()
+

@@ -11,7 +11,7 @@ func InitRouter() *gin.Engine {
 	/*r.GET("/article", api.GetArticle)
 	r.POST("/upload", api.UploadFile)
 	r.GET("/getUser", api.GetUser)*/
-	r.GET("/getOpenId", api.GetOpenId)
+	r.GET("/getAccessToken", api.GetAccessToken)
 	//1.首页
 	r.GET("/home", api.HomePage)
 	//2.开始答题/下一题
