@@ -86,9 +86,9 @@ func CancelCollect(c *gin.Context) {
 }
 
 type AnswerReq struct {
-	OpenId   string `schema:"open_id"`
-	MyAnswer string `schema:"my_answer"`
-	TopicId  int    `schema:"topic_id"`
+	AccessToken string `schema:"accessToken"`
+	MyAnswer    string `schema:"my_answer"`
+	TopicId     int    `schema:"topic_id"`
 }
 
 func Answer(c *gin.Context) {
@@ -100,7 +100,7 @@ func Answer(c *gin.Context) {
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
-	resp, err := topic_service.Answer(req.OpenId, req.TopicId, req.MyAnswer)
+	resp, err := topic_service.Answer(req.AccessToken, req.TopicId, req.MyAnswer)
 	if err != nil {
 		logrus.Error("answer error :", err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)

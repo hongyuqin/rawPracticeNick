@@ -19,13 +19,15 @@ const TODAY_PREFIX = "today_prefix_"
     	"wrong_num":10,//做错数量 需复习数量
 */
 type HomeDetail struct {
-	Rank             int `json:"rank"`
-	Total            int `json:"total"`
-	LeftDays         int `json:"left_days"`
-	TodayPracticeNum int `json:"today_practice_num"`
-	DailyNeedNum     int `json:"daily_need_num"`
-	HasLearnNum      int `json:"has_learn_num"`
-	WrongNum         int `json:"wrong_num"`
+	Rank             int    `json:"rank"`
+	Total            int    `json:"total"`
+	LeftDays         int    `json:"left_days"`
+	TodayPracticeNum int    `json:"today_practice_num"`
+	DailyNeedNum     int    `json:"daily_need_num"`
+	HasLearnNum      int    `json:"has_learn_num"`
+	WrongNum         int    `json:"wrong_num"`
+	TotalTopicNum    int    `json:"total_topic_num"`
+	Region           string `json:"region"`
 }
 
 func Home(openId string) (*HomeDetail, error) {
@@ -61,6 +63,8 @@ func Home(openId string) (*HomeDetail, error) {
 		DailyNeedNum:     user.DailyNeedNum,
 		HasLearnNum:      user.HasLearnNum,
 		WrongNum:         user.WrongNum,
+		Region:           user.Region,
+		TotalTopicNum:    1000,
 	}
 	return homeDetail, nil
 }
