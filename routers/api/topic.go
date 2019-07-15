@@ -11,27 +11,20 @@ import (
 	"rawPracticeNick/service/topic_service"
 )
 
-type TopicReq struct {
-	AccessToken  string `schema:"accessToken"`
-	IsBegin      bool   `schema:"isBegin"`
-	CurrentIndex int    `schema:"currentIndex"`
-	Operate      string `schema:"operate"`
-}
-
 func NextTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var decoder = schema.NewDecoder()
-	req := &TopicReq{}
+	req := &topic_service.TopicReq{}
 	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
 		logrus.Error("decode error :", err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR, err.Error())
 		return
 	}
 
 	topic, err := topic_service.NextTopic(req)
 	if err != nil {
 		logrus.Error("NextTopic error :", err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR, err.Error())
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, topic)
@@ -40,10 +33,10 @@ func NextTopic(c *gin.Context) {
 func NextWrongTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var decoder = schema.NewDecoder()
-	req := &TopicReq{}
+	req := &topic_service.TopicReq{}
 	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
 		logrus.Error("decode error :", err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR, err.Error())
 		return
 	}
 	topic, err := topic_service.NextWrongTopic(req)
@@ -58,10 +51,10 @@ func NextWrongTopic(c *gin.Context) {
 func NextCollect(c *gin.Context) {
 	appG := app.Gin{C: c}
 	var decoder = schema.NewDecoder()
-	req := &TopicReq{}
+	req := &topic_service.TopicReq{}
 	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
 		logrus.Error("decode error :", err)
-		appG.Response(http.StatusOK, e.ERROR, nil)
+		appG.Response(http.StatusOK, e.ERROR, err.Error())
 		return
 	}
 	topic, err := topic_service.NextCollect(req)

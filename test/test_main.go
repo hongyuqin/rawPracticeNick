@@ -23,8 +23,16 @@ func testTransInt() {
 	/*a := 10
 	str := strconv.Itoa(a)*/
 }
+func testMapRem() {
+	allTopicsMap := make(map[int]struct{})
+	allTopicsMap[100] = struct{}{}
+	//delete(allTopicsMap, 100)
+	fmt.Println(len(allTopicsMap))
+
+}
 func main() {
-	testInt()
+	testMapRem()
+	//testInt()
 	/*log.SetOutput(os.Stdout)
 	log.Info("main ")
 	xlsx, err := xlsx.OpenFile("./Workbook.xlsx")

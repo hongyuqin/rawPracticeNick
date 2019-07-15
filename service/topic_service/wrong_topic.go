@@ -6,14 +6,18 @@ import (
 	"rawPracticeNick/common"
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/gredis"
-	"rawPracticeNick/routers/api"
 	"strconv"
 )
 
-func getBeginWrongTopic(req *api.TopicReq) (*Topic, error) {
+func getBeginWrongTopic(req *TopicReq) (*Topic, error) {
 	collects, err := models.GetCollects(req.AccessToken)
 	if err != nil {
 		logrus.Error("GetCollects error :", err)
+		return nil, err
+	}
+	_, err = gredis.Delete(common.WRONG_TOPIC_LIST + req.AccessToken)
+	if err != nil {
+		logrus.Error("delete error :", err)
 		return nil, err
 	}
 	for _, collect := range collects {
@@ -25,7 +29,7 @@ func getBeginWrongTopic(req *api.TopicReq) (*Topic, error) {
 	}
 	return getTopicByIndex(common.WRONG_TOPIC_LIST, req.AccessToken, 0)
 }
-func NextWrongTopic(req *api.TopicReq) (*Topic, error) {
+func NextWrongTopic(req *TopicReq) (*Topic, error) {
 	if req.IsBegin {
 		return getBeginWrongTopic(req)
 	}

@@ -7,7 +7,6 @@ import (
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/gredis"
 	"rawPracticeNick/pkg/util"
-	"rawPracticeNick/routers/api"
 	"strconv"
 )
 
@@ -30,7 +29,7 @@ type AnswerResp struct {
 	RightNum      int    `json:"right_num"`
 }
 
-func getBeginTopic(req *api.TopicReq) (*Topic, error) {
+func getBeginTopic(req *TopicReq) (*Topic, error) {
 	allTopicsMap := make(map[int]struct{})
 	user, err := models.SelectUserByOpenId(req.AccessToken)
 	if err != nil {
@@ -60,10 +59,13 @@ func getBeginTopic(req *api.TopicReq) (*Topic, error) {
 		logrus.Error("GetDoneTopics error :", err)
 		return nil, err
 	}
-	doneTopicIdCol := make([]int, 0)
 	for _, topic := range doneTopics {
-		doneTopicIdCol = append(doneTopicIdCol, topic.ID)
-		delete(allTopicsMap, topic.ID)
+		delete(allTopicsMap, topic.TopicId)
+	}
+	_, err = gredis.Delete(common.TOPIC_LIST + req.AccessToken)
+	if err != nil {
+		logrus.Error("delete error :", err)
+		return nil, err
 	}
 	for topicId := range allTopicsMap {
 		_, err = gredis.LPush(common.TOPIC_LIST+req.AccessToken, strconv.Itoa(topicId))
@@ -75,6 +77,18 @@ func getBeginTopic(req *api.TopicReq) (*Topic, error) {
 	return getTopicByIndex(common.TOPIC_LIST, req.AccessToken, 0)
 }
 func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
+	if index < 0 {
+		return nil, errors.New("已经是第一题")
+	}
+	//查看长度
+	len, err := gredis.LLen(prefix + openId)
+	if err != nil {
+		logrus.Error("LLen error :", err)
+		return nil, err
+	}
+	if len >= index {
+		return nil, errors.New("已经是最后一题")
+	}
 	topicId, err := gredis.LIndex(prefix+openId, index)
 	if err != nil {
 		logrus.Error("LIndex error :", err)
@@ -94,7 +108,7 @@ func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
 		OptionD:   topic.OptionD,
 	}, nil
 }
-func NextTopic(req *api.TopicReq) (*Topic, error) {
+func NextTopic(req *TopicReq) (*Topic, error) {
 	if req.IsBegin {
 		return getBeginTopic(req)
 	}
@@ -129,6 +143,10 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 		}); err != nil {
 			logrus.Error("DelWrongTopic error :", err)
 			return nil, err
+		}
+		//更新今日已学
+		if err = gredis.INCR(common.TODAY_PREFIX+openId, util.GetNextDayBegin()); err != nil {
+			logrus.Error("incr error :", err)
 		}
 	} else {
 		right = false

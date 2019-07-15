@@ -63,6 +63,24 @@ func Set(key string, data interface{}, time int) error {
 	return nil
 }
 
+// inct a key/value
+func INCR(key string, time int64) error {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	_, err := conn.Do("INCR", key)
+	if err != nil {
+		return err
+	}
+
+	_, err = conn.Do("EXPIRE", key, time)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 // Exists check a key
 func Exists(key string) bool {
 	conn := RedisConn.Get()
@@ -156,5 +174,10 @@ func LIndex(key string, index int) (int, error) {
 	defer conn.Close()
 
 	return redis.Int(conn.Do("LINDEX", key, strconv.Itoa(index)))
+}
+func LLen(key string) (int, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
 
+	return redis.Int(conn.Do("LLEN", key))
 }

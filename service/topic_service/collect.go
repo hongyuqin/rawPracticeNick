@@ -6,14 +6,25 @@ import (
 	"rawPracticeNick/common"
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/gredis"
-	"rawPracticeNick/routers/api"
 	"strconv"
 )
 
-func getBeginCollect(req *api.TopicReq) (*Topic, error) {
+type TopicReq struct {
+	AccessToken  string `schema:"accessToken"`
+	IsBegin      bool   `schema:"isBegin"`
+	CurrentIndex int    `schema:"currentIndex"`
+	Operate      string `schema:"operate"`
+}
+
+func getBeginCollect(req *TopicReq) (*Topic, error) {
 	collects, err := models.GetCollects(req.AccessToken)
 	if err != nil {
 		logrus.Error("GetCollects error :", err)
+		return nil, err
+	}
+	_, err = gredis.Delete(common.COLLECT_LIST + req.AccessToken)
+	if err != nil {
+		logrus.Error("delete error :", err)
 		return nil, err
 	}
 	for _, collect := range collects {
@@ -25,7 +36,7 @@ func getBeginCollect(req *api.TopicReq) (*Topic, error) {
 	}
 	return getTopicByIndex(common.COLLECT_LIST, req.AccessToken, 0)
 }
-func NextCollect(req *api.TopicReq) (*Topic, error) {
+func NextCollect(req *TopicReq) (*Topic, error) {
 	if req.IsBegin {
 		return getBeginCollect(req)
 	}

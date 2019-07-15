@@ -42,9 +42,9 @@ func GetTopics(topic *Topic) ([]Topic, error) {
 		err    error
 	)
 	data := make(map[string]interface{})
-	if topic.Region != "" {
+	/*if topic.Region != "" {
 		data["region"] = topic.Region
-	}
+	}*/
 	if topic.ElementTypeOne != "" {
 		data["element_type_one"] = topic.ElementTypeOne
 	}
