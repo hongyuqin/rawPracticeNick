@@ -47,3 +47,17 @@ func GetCollect(openId string) (*Collect, error) {
 	}
 	return &collect, nil
 }
+func GetCollects(openId string) ([]Collect, error) {
+	var (
+		collects []Collect
+		err      error
+	)
+	data := make(map[string]interface{})
+	data["open_id"] = openId
+
+	err = db.Where(data).Find(&collects).Error
+	if err != nil {
+		return nil, err
+	}
+	return collects, nil
+}

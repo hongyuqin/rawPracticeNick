@@ -9,13 +9,26 @@ import (
 	"rawPracticeNick/pkg/app"
 	"rawPracticeNick/pkg/e"
 	"rawPracticeNick/service/topic_service"
-	"strconv"
 )
+
+type TopicReq struct {
+	AccessToken  string `schema:"accessToken"`
+	IsBegin      bool   `schema:"isBegin"`
+	CurrentIndex int    `schema:"currentIndex"`
+	Operate      string `schema:"operate"`
+}
 
 func NextTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("accessToken")
-	topic, err := topic_service.NextTopic(openId)
+	var decoder = schema.NewDecoder()
+	req := &TopicReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+
+	topic, err := topic_service.NextTopic(req)
 	if err != nil {
 		logrus.Error("NextTopic error :", err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
@@ -26,8 +39,14 @@ func NextTopic(c *gin.Context) {
 
 func NextWrongTopic(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("accessToken")
-	topic, err := topic_service.NextWrongTopic(openId)
+	var decoder = schema.NewDecoder()
+	req := &TopicReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+	topic, err := topic_service.NextWrongTopic(req)
 	if err != nil {
 		logrus.Error("NextWrongTopic error :", err)
 		appG.Response(http.StatusOK, e.ERROR_NO_WRONG_TOPIC, nil)
@@ -38,8 +57,14 @@ func NextWrongTopic(c *gin.Context) {
 
 func NextCollect(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("accessToken")
-	topic, err := topic_service.NextCollect(openId)
+	var decoder = schema.NewDecoder()
+	req := &TopicReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+	topic, err := topic_service.NextCollect(req)
 	if err != nil {
 		logrus.Error("NextCollect error :", err)
 		appG.Response(http.StatusOK, e.ERROR_NO_COLLECT, nil)
@@ -48,18 +73,22 @@ func NextCollect(c *gin.Context) {
 	appG.Response(http.StatusOK, e.SUCCESS, topic)
 }
 
+type CollectReq struct {
+	AccessToken string `schema:"accessToken"`
+	TopicId     int    `schema:"topic_id"`
+}
+
 func Collect(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("accessToken")
-	topicIdStr := c.Query("topic_id")
-	topicId, err := strconv.Atoi(topicIdStr)
-	if err != nil {
-		logrus.Error("no topic_id")
+	var decoder = schema.NewDecoder()
+	req := &CollectReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
-	if err = topic_service.Collect(openId, topicId); err != nil {
-		logrus.Error("collect error :", openId, topicId)
+	if err := topic_service.Collect(req.AccessToken, req.TopicId); err != nil {
+		logrus.Error("collect error :", req.AccessToken, req.TopicId)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
@@ -68,16 +97,14 @@ func Collect(c *gin.Context) {
 
 func CancelCollect(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("accessToken")
-	topicIdStr := c.Query("topic_id")
-	topicId, err := strconv.Atoi(topicIdStr)
-	if err != nil {
-		logrus.Error("no topic_id")
+	var decoder = schema.NewDecoder()
+	req := &CollectReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
-	err = models.DelCollect(topicId, openId)
-	if err != nil {
+	if err := models.DelCollect(req.TopicId, req.AccessToken); err != nil {
 		logrus.Error("del collect error :", err)
 		appG.Response(http.StatusOK, e.ERROR, nil)
 		return

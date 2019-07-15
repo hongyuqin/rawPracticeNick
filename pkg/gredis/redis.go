@@ -5,6 +5,7 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/sirupsen/logrus"
 	"rawPracticeNick/pkg/setting"
+	"strconv"
 	"time"
 )
 
@@ -142,4 +143,18 @@ func ExpireAt(key string, expireMillSecond int64) error {
 		return err
 	}
 	return nil
+}
+func LPush(key, value string) (int, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	return redis.Int(conn.Do("LPUSH", key, value))
+
+}
+func LIndex(key string, index int) (int, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
+
+	return redis.Int(conn.Do("LINDEX", key, strconv.Itoa(index)))
+
 }

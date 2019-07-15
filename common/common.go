@@ -17,3 +17,15 @@ const (
 const OPENID_SET = "OPENID_SET"
 
 const TODAY_FINISH_PREFIX = "TODAY_FINISH_"
+
+const TODAY_PREFIX = "today_prefix_"
+
+const TOPIC_LIST = "topic_list_"
+const COLLECT_LIST = "collect_list_"
+const WRONG_TOPIC_LIST = "wrong_topic_list_"
+
+//上一题 下一题
+const (
+	OPERATE_LAST = "last"
+	OPERATE_NEXT = "next"
+)

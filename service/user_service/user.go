@@ -2,12 +2,11 @@ package user_service
 
 import (
 	"github.com/sirupsen/logrus"
+	"rawPracticeNick/common"
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/gredis"
 	"strconv"
 )
-
-const TODAY_PREFIX = "today_prefix_"
 
 /**
 		"rank":10,//排名
@@ -46,7 +45,7 @@ func Home(openId string) (*HomeDetail, error) {
 	}
 	//TODO:3.获取剩余天数
 	//4.获取今日做题数
-	todayNumStr, err := gredis.Get(TODAY_PREFIX + openId)
+	todayNumStr, err := gredis.Get(common.TODAY_PREFIX + openId)
 	if err != nil {
 		logrus.Error("redis Get error :", err)
 		todayNumStr = []byte("0")

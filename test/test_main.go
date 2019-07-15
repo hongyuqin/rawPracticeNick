@@ -19,6 +19,10 @@ func testInt() {
 	a := 100000
 	fmt.Println(string(a))
 }
+func testTransInt() {
+	/*a := 10
+	str := strconv.Itoa(a)*/
+}
 func main() {
 	testInt()
 	/*log.SetOutput(os.Stdout)

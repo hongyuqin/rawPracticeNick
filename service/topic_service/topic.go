@@ -7,6 +7,8 @@ import (
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/gredis"
 	"rawPracticeNick/pkg/util"
+	"rawPracticeNick/routers/api"
+	"strconv"
 )
 
 type Topic struct {
@@ -28,15 +30,16 @@ type AnswerResp struct {
 	RightNum      int    `json:"right_num"`
 }
 
-func NextTopic(openId string) (*Topic, error) {
-	//-1.TODO 拿到用户当前设置
+func getBeginTopic(req *api.TopicReq) (*Topic, error) {
 	allTopicsMap := make(map[int]struct{})
-
-	region := ""
+	user, err := models.SelectUserByOpenId(req.AccessToken)
+	if err != nil {
+		logrus.Error("get user error")
+		return nil, err
+	}
+	region := user.Region
 	elementTypeOne := ""
 	elementTypeTwo := ""
-	//0.生成examId
-	//1.拿到分类的全部id
 	topics, err := models.GetTopics(&models.Topic{
 		Region:         region,
 		ElementTypeOne: elementTypeOne,
@@ -50,10 +53,9 @@ func NextTopic(openId string) (*Topic, error) {
 	for _, topic := range topics {
 		topicIdCol = append(topicIdCol, topic.ID)
 		allTopicsMap[topic.ID] = struct{}{}
-		//TODO: 存到redis
 	}
 	//2.拿到已做题目的全部id
-	doneTopics, err := models.GetDoneTopics(openId)
+	doneTopics, err := models.GetDoneTopics(req.AccessToken)
 	if err != nil {
 		logrus.Error("GetDoneTopics error :", err)
 		return nil, err
@@ -62,27 +64,45 @@ func NextTopic(openId string) (*Topic, error) {
 	for _, topic := range doneTopics {
 		doneTopicIdCol = append(doneTopicIdCol, topic.ID)
 		delete(allTopicsMap, topic.ID)
-		//TODO:存到redis
 	}
-	//3.把这两个值存到redis 未做的题目：已做的题目 随机抽一题出来
-
-	//4.过滤一下 就是要做的题目表
-	//biubiu: 因为放到map达到了随机的效果
-	for id := range allTopicsMap {
-		topic, err := models.GetTopic(id)
+	for topicId := range allTopicsMap {
+		_, err = gredis.LPush(common.TOPIC_LIST+req.AccessToken, strconv.Itoa(topicId))
 		if err != nil {
-			logrus.Error("GetTopic error ", id)
+			logrus.Error("lpush redis error :", err)
 			return nil, err
 		}
-		//5.返回题目
-		return &Topic{
-			TopicId:   topic.ID,
-			TopicName: topic.TopicName,
-			OptionA:   topic.OptionA,
-			OptionB:   topic.OptionB,
-			OptionC:   topic.OptionC,
-			OptionD:   topic.OptionD,
-		}, nil
+	}
+	return getTopicByIndex(common.TOPIC_LIST, req.AccessToken, 0)
+}
+func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
+	topicId, err := gredis.LIndex(prefix+openId, index)
+	if err != nil {
+		logrus.Error("LIndex error :", err)
+		return nil, err
+	}
+	topic, err := models.GetTopic(topicId)
+	if err != nil {
+		logrus.Error("GetTopic error :", err)
+		return nil, err
+	}
+	return &Topic{
+		TopicId:   topic.ID,
+		TopicName: topic.TopicName,
+		OptionA:   topic.OptionA,
+		OptionB:   topic.OptionB,
+		OptionC:   topic.OptionC,
+		OptionD:   topic.OptionD,
+	}, nil
+}
+func NextTopic(req *api.TopicReq) (*Topic, error) {
+	if req.IsBegin {
+		return getBeginTopic(req)
+	}
+	if req.Operate == common.OPERATE_LAST {
+		return getTopicByIndex(common.TOPIC_LIST, req.AccessToken, req.CurrentIndex-1)
+	}
+	if req.Operate == common.OPERATE_NEXT {
+		return getTopicByIndex(common.TOPIC_LIST, req.AccessToken, req.CurrentIndex+1)
 	}
 	return nil, errors.New("no topic")
 

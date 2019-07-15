@@ -1,29 +1,40 @@
 package topic_service
 
 import (
+	"errors"
 	"github.com/sirupsen/logrus"
+	"rawPracticeNick/common"
 	"rawPracticeNick/models"
+	"rawPracticeNick/pkg/gredis"
+	"rawPracticeNick/routers/api"
+	"strconv"
 )
 
-func NextCollect(openId string) (*Topic, error) {
-	collect, err := models.GetCollect(openId)
+func getBeginCollect(req *api.TopicReq) (*Topic, error) {
+	collects, err := models.GetCollects(req.AccessToken)
 	if err != nil {
-		logrus.Error("GetCollect error :", err)
+		logrus.Error("GetCollects error :", err)
 		return nil, err
 	}
-	//要去topic表找具体题目
-	topic, err := models.GetTopic(collect.TopicId)
-	if err != nil {
-		logrus.Error("GetTopic error :", collect.TopicId)
-		return nil, err
+	for _, collect := range collects {
+		_, err = gredis.LPush(common.COLLECT_LIST, strconv.Itoa(collect.TopicId))
+		if err != nil {
+			logrus.Error("lpush redis error :", err)
+			return nil, err
+		}
 	}
-	return &Topic{
-		TopicId:   topic.ID,
-		TopicName: topic.TopicName,
-		OptionA:   topic.OptionA,
-		OptionB:   topic.OptionB,
-		OptionC:   topic.OptionC,
-		OptionD:   topic.OptionD,
-	}, nil
+	return getTopicByIndex(common.COLLECT_LIST, req.AccessToken, 0)
+}
+func NextCollect(req *api.TopicReq) (*Topic, error) {
+	if req.IsBegin {
+		return getBeginCollect(req)
+	}
+	if req.Operate == common.OPERATE_LAST {
+		return getTopicByIndex(common.COLLECT_LIST, req.AccessToken, req.CurrentIndex-1)
+	}
+	if req.Operate == common.OPERATE_NEXT {
+		return getTopicByIndex(common.COLLECT_LIST, req.AccessToken, req.CurrentIndex+1)
+	}
+	return nil, errors.New("no topic")
 
 }

@@ -21,9 +21,12 @@ url:/home
 
 gg* 2.开始答题/下一题
 功能：把今天答得题存下来，有个今天刷题 需要展示
-url:/nextTopic
+url:/nextTopic?isBegin=true&currentIndex=10&operate=last
 请求方式：GET
 请求参数：
+    isBegin:true 是否开始答题(是的话，要初始化一个redis列表)
+    currentIndex:10 当前所在redis列表位置
+    operate:last last上一题；next下一题
 返回参数：
 {
     "code": 200,
@@ -40,9 +43,12 @@ url:/nextTopic
 
 gg 3.下一道错题
 功能：做下一道错题
-url:/nextWrongTopic
+url:/nextWrongTopic?isBegin=true&currentIndex=10&operate=last
 请求方式：GET
 请求参数：
+    isBegin:true 是否开始答题(是的话，要初始化一个redis列表)
+    currentIndex:10 当前所在redis列表位置
+    operate:last last上一题；next下一题
 返回参数：
 {
     "code": 200,
@@ -58,9 +64,12 @@ url:/nextWrongTopic
 }
 
 gg 4.下一道收藏的题
-url:/nextCollect
+url:/nextCollect?isBegin=true&currentIndex=10&operate=last
 请求方式：GET
 请求参数：
+    isBegin:true 是否开始答题(是的话，要初始化一个redis列表)
+    currentIndex:10 当前所在redis列表位置
+    operate:last last上一题；next下一题
 返回参数：
 {
     "code": 200,
