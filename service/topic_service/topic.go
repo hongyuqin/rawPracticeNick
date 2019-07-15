@@ -11,6 +11,7 @@ import (
 )
 
 type Topic struct {
+	Index     int    `json:"index"`
 	TopicId   int    `json:"topic_id"`
 	TopicName string `json:"topic_name"`
 	OptionA   string `json:"option_a"`
@@ -100,6 +101,7 @@ func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
 		return nil, err
 	}
 	return &Topic{
+		Index:     index,
 		TopicId:   topic.ID,
 		TopicName: topic.TopicName,
 		OptionA:   topic.OptionA,
