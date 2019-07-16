@@ -21,11 +21,11 @@ url:/home
 
 gg* 2.开始答题/下一题
 功能：把今天答得题存下来，有个今天刷题 需要展示
-url:/nextTopic?isBegin=true&currentIndex=10&operate=last
+url:/nextTopic?is_begin=true&current_index=10&operate=last
 请求方式：GET
 请求参数：
-    isBegin:true 是否开始答题(是的话，要初始化一个redis列表)
-    currentIndex:10 当前所在redis列表位置
+    is_begin:true 是否开始答题(是的话，要初始化一个redis列表)
+    current_index:10 当前所在redis列表位置
     operate:last last上一题；next下一题
 返回参数：
 {

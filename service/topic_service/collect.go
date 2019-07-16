@@ -11,8 +11,8 @@ import (
 
 type TopicReq struct {
 	AccessToken  string `schema:"accessToken"`
-	IsBegin      bool   `schema:"isBegin"`
-	CurrentIndex int    `schema:"currentIndex"`
+	IsBegin      bool   `schema:"is_begin"`
+	CurrentIndex int    `schema:"current_index"`
 	Operate      string `schema:"operate"`
 }
 

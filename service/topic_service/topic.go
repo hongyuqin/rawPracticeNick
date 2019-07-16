@@ -87,7 +87,7 @@ func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
 		logrus.Error("LLen error :", err)
 		return nil, err
 	}
-	if len >= index {
+	if index >= len {
 		return nil, errors.New("已经是最后一题")
 	}
 	topicId, err := gredis.LIndex(prefix+openId, index)
