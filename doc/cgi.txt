@@ -165,7 +165,23 @@ url:/cancelCollect?topic_id=xx
     "msg": ""
 }
 
-
+10.查看解析
+url:/getAnalysis?topic_id=xx
+请求方式:GET
+请求参数：
+	topic_id 题目id
+	my_answer 我的答案
+返回参数：
+{
+    "code": 200,
+    "msg": "",
+    "data":{
+    	"answer":"D",//答案
+    	"topic_analysis":"",//解析
+    	"wrong_num":,//做错数量
+    	"right_num"://作对数量
+    }
+}
 
 
 

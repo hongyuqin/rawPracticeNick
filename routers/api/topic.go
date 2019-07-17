@@ -128,3 +128,20 @@ func Answer(c *gin.Context) {
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, resp)
 }
+func GetAnalysis(c *gin.Context) {
+	appG := app.Gin{C: c}
+	var decoder = schema.NewDecoder()
+	req := &AnswerReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
+		return
+	}
+	resp, err := topic_service.GetAnalysis(req.AccessToken, req.TopicId)
+	if err != nil {
+		logrus.Error("getAnalysis error :", err)
+		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+		return
+	}
+	appG.Response(http.StatusOK, e.SUCCESS, resp)
+}

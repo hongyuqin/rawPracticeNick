@@ -19,7 +19,7 @@ CREATE TABLE `user` (
   `answer_num` int(10) DEFAULT 0 COMMENT '答题量',
   `wrong_num` int(10) DEFAULT 0 COMMENT '做错数量',
   `region` varchar(20) DEFAULT '' COMMENT '地域',
-  `exam_type` varchar(20) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
+  `exam_type` varchar(40) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',

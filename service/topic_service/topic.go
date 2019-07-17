@@ -196,6 +196,24 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 	}, nil
 
 }
+func GetAnalysis(openId string, topicId int) (*AnswerResp, error) {
+	//1.看下答案对不对
+	topic, err := models.GetTopic(topicId)
+	if err != nil {
+		logrus.Error("GetTopic error :", err)
+		return nil, err
+	}
+	if topic == nil {
+		logrus.Error("GetTopic empty :", topicId)
+		return nil, err
+	}
+	return &AnswerResp{
+		Answer:        topic.Answer,
+		TopicAnalysis: topic.TopicAnalysis,
+		WrongNum:      topic.WrongNum,
+		RightNum:      topic.RightNum,
+	}, nil
+}
 func Collect(openId string, topicId int) error {
 	if err := models.AddCollect(models.Collect{
 		OpenId:  openId,
