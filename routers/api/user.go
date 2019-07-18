@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"github.com/gin-gonic/gin"
+	"github.com/gorilla/schema"
 	"github.com/sirupsen/logrus"
 	"net/http"
 	"rawPracticeNick/common"
@@ -12,7 +13,6 @@ import (
 	"rawPracticeNick/pkg/gredis"
 	"rawPracticeNick/pkg/util"
 	"rawPracticeNick/service/user_service"
-	"strconv"
 )
 
 func GetUser(c *gin.Context) {
@@ -90,17 +90,14 @@ func HomePage(c *gin.Context) {
 
 func Plan(c *gin.Context) {
 	appG := app.Gin{C: c}
-	openId := c.Query("accessToken")
-	region := c.Query("region")
-	examType := c.Query("exam_type")
-	dailyNeedNumStr := c.Query("daily_need_num")
-	dailyNeedNum, err := strconv.Atoi(dailyNeedNumStr)
-	if err != nil {
-		logrus.Error("dailyNeedNum trans error :", err)
-		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+	var decoder = schema.NewDecoder()
+	req := &user_service.PlanReq{}
+	if err := decoder.Decode(req, c.Request.URL.Query()); err != nil {
+		logrus.Error("decode error :", err)
+		appG.Response(http.StatusOK, e.ERROR, nil)
 		return
 	}
-	err = user_service.Plan(openId, region, examType, dailyNeedNum)
+	err := user_service.Plan(req)
 	if err != nil {
 		logrus.Error("Plan error :", err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)

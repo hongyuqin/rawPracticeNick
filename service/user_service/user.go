@@ -55,24 +55,38 @@ func Home(openId string) (*HomeDetail, error) {
 		logrus.Error("Atoi error :", err)
 		return nil, err
 	}
-
+	//5.今日错题数
+	topics, err := models.GetWrongTopics(openId)
+	if err != nil {
+		logrus.Error("GetWrongTopics error :", err)
+		return nil, err
+	}
 	homeDetail := &HomeDetail{
+		Rank:             1,
 		Total:            count,
 		TodayPracticeNum: todayNum,
 		DailyNeedNum:     user.DailyNeedNum,
 		HasLearnNum:      user.HasLearnNum,
-		WrongNum:         user.WrongNum,
+		WrongNum:         len(topics),
 		Region:           user.Region,
 		TotalTopicNum:    1000,
 	}
 	return homeDetail, nil
 }
-func Plan(openId string, region string, examType string, dailyNeedNum int) error {
+
+type PlanReq struct {
+	AccessToken  string `schema:"accessToken"`
+	Region       string `schema:"region"`
+	ExamType     string `schema:"exam_type"`
+	DailyNeedNum int    `schema:"daily_need_num"`
+}
+
+func Plan(req *PlanReq) error {
 	if err := models.UpdateUser(&models.User{
-		OpenId:       openId,
-		Region:       region,
-		ExamType:     examType,
-		DailyNeedNum: dailyNeedNum,
+		OpenId:       req.AccessToken,
+		Region:       req.Region,
+		ExamType:     req.ExamType,
+		DailyNeedNum: req.DailyNeedNum,
 	}); err != nil {
 		logrus.Error("updateUser error :", err)
 		return err

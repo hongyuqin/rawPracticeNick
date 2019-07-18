@@ -30,6 +30,8 @@ func InitRouter() *gin.Engine {
 	r.GET("/collect", api.Collect)
 	//9.取消收藏
 	r.GET("/cancelCollect", api.CancelCollect)
+	//10.查看解析
+	r.GET("/getAnalysis", api.GetAnalysis)
 
 	return r
 }
