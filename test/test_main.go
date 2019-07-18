@@ -1,7 +1,6 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -49,10 +48,28 @@ func testMap() {
 //把interface 序列化为json字节
 func testJson() {
 	//b, err := json.Marshal(u)
-	json.Marshal()
+	//json.Marshal()
+}
+func testCh() {
+	done := make(chan bool)
+
+	for i := 0; i < 4; i++ {
+		go func() {
+			time.Sleep(time.Second)
+			go func() {
+				time.Sleep(time.Second)
+				done <- true
+			}()
+			done <- true
+		}()
+	}
+	for i := 0; i < 8; i++ {
+		<-done
+	}
 }
 func main() {
-	testMap()
+	testCh()
+	//testMap()
 	//testTime()
 	//bytes := []byte("dfsdfs")
 	//fmt.Println("bytes is :",string(bytes))
