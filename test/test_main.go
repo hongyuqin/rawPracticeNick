@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 )
@@ -30,8 +31,32 @@ func testMapRem() {
 	fmt.Println(len(allTopicsMap))
 
 }
+func testTime() {
+	p := fmt.Println
+	t := time.Now()
+	p(t.Format(time.RFC3339))
+}
+
+//xxx
+func testMap() {
+	var dat = map[string]interface{}{
+		"data": "hongyuqin",
+	}
+	str := dat["data"].([]byte)
+	fmt.Println(str)
+}
+
+//把interface 序列化为json字节
+func testJson() {
+	//b, err := json.Marshal(u)
+	json.Marshal()
+}
 func main() {
-	testMapRem()
+	testMap()
+	//testTime()
+	//bytes := []byte("dfsdfs")
+	//fmt.Println("bytes is :",string(bytes))
+	//testMapRem()
 	//testInt()
 	/*log.SetOutput(os.Stdout)
 	log.Info("main ")
