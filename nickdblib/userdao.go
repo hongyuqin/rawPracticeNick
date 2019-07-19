@@ -3,6 +3,7 @@ package nickdblib
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"log"
 )
 
@@ -54,7 +55,8 @@ func FindUserById(id int) (*User, error) {
 //1.2 查找：根据姓名查找用户
 func FindUserByName(searchName string) (*User, error) {
 	log.Println("FindUserByName : ", searchName)
-	row := DB.QueryRow("select id,password,status,name from users where name = ?", searchName)
+	likeName := fmt.Sprintf("n%%%s%%", searchName)
+	row := DB.QueryRow(`select id,password,status,name from users where name like ?`, likeName)
 	var user User
 	var name, password string
 	var status, id int
