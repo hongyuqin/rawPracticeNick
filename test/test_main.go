@@ -2,6 +2,10 @@ package main
 
 import (
 	"fmt"
+	"io/ioutil"
+	"klook.libs/utils"
+	"os"
+	"strings"
 	"time"
 )
 
@@ -41,8 +45,8 @@ func testMap() {
 	var dat = map[string]interface{}{
 		"data": "hongyuqin",
 	}
-	str := dat["data"].([]byte)
-	fmt.Println(str)
+
+	fmt.Println(dat)
 }
 
 //把interface 序列化为json字节
@@ -67,8 +71,140 @@ func testCh() {
 		<-done
 	}
 }
+func GetFileContentAsStringLines(filePath string) ([]string, error) {
+	fmt.Printf("get file content as lines: %v", filePath)
+	result := []string{}
+	b, err := ioutil.ReadFile(filePath)
+	if err != nil {
+		fmt.Printf("read file: %v error: %v", filePath, err)
+		return result, err
+	}
+	s := string(b)
+	for _, lineStr := range strings.Split(s, "\n") {
+		lineStr = strings.TrimSpace(lineStr)
+		if lineStr == "" {
+			continue
+		}
+		result = append(result, lineStr)
+	}
+	fmt.Printf("get file content as lines: %v, size: %v", filePath, len(result))
+	return result, nil
+}
+func genInsertMqSql() {
+	dat, err := ioutil.ReadFile("./file/test.txt")
+	if err != nil {
+		fmt.Printf("gen sql error")
+		return
+	}
+	//fmt.Print(string(dat))
+	arr := strings.Split(string(dat), "\n")
+	fmt.Println("arr len is :", len(arr))
+	//0.创建文件 可以写入
+	f, err := os.Create("./file/dbsql.txt")
+	if err != nil {
+		fmt.Println("创建文件失败")
+		return
+	}
+	defer f.Close()
+	//1.以换行分割
+	for _, str := range arr {
+		//2.0 以 "{ 开头才处理
+		if strings.HasPrefix(str, `--`) {
+			continue
+		}
+		insertMqConsumerLogPattern := `insert into erp_kl_mq_consumer_log(unique_reference,type,topic,channel,body,status) values ('%s','%s','%s','%s',%s,2);`
+		insertHttpRetryPattern := `insert into erp_http_retry (retry_type,max_retry,current_retry,retry_status,source_platform,unique_reference) values ('%s',%d,%d,'%s','%s','%s');`
+		insertUniqueReferencePattern := `insert into erp_unique_reference (unique_reference) values ('%s');`
+		if !strings.HasPrefix(str, `topic`) {
+			//uuidString := utils.GetUUIDString()
+			//分成 unique_reference,type,topic,channel,`body`
+			firstEnd := strings.Index(str, `, topic`)
+			secondBegin := strings.Index(str, `, topic`)
+			secondEnd := strings.Index(str, `, channel`)
+			thirdBegin := strings.Index(str, `, channel`)
+			fmt.Printf("json is :%s \n", str[0:firstEnd])
+			fmt.Printf(",topic is :%s\n", str[secondBegin+8:secondEnd])
+			fmt.Printf(",channel is :%s\n", str[thirdBegin+10:len(str)-1])
+			fmt.Printf("=============\n")
+			json := str[0:firstEnd]
+			topic := str[secondBegin+8 : secondEnd]
+			channel := str[thirdBegin+10 : len(str)-1]
+			dataType := getDataType(topic)
+			//break
+			uuid := utils.GetUUIDString()
+			//3.组装sql
+			//3.1 mqConsumerLog
+			insertMqLogSql := fmt.Sprintf(insertMqConsumerLogPattern, uuid, dataType, topic, channel, fmt.Sprintf(`AES_ENCRYPT('%s','nRajDntseUtIIJqs')`, json))
+			n3, err := f.WriteString(insertMqLogSql + "\n")
+			if err != nil {
+				fmt.Println("生成sql失败")
+				return
+			}
+			f.Sync()
+			//3.2 httpRetry
+			insertRetrySql := fmt.Sprintf(insertHttpRetryPattern, dataType, 10, 0, "Waiting", "klk", uuid)
+			n3, err = f.WriteString(insertRetrySql + "\n")
+			if err != nil {
+				fmt.Println("生成sql失败")
+				return
+			}
+			f.Sync()
+			//3.3 erpUniqueReference
+			insertUUIDSql := fmt.Sprintf(insertUniqueReferencePattern, uuid)
+			n3, err = f.WriteString(insertUUIDSql + "\n")
+			if err != nil {
+				fmt.Println("生成sql失败")
+				return
+			}
+			f.Sync()
+			fmt.Printf("wrote %d bytes\n", n3)
+		}
+	}
+
+}
+func getDataType(topic string) string {
+	switch topic {
+	case "ActivitySyncERPTopic":
+		return "Item"
+	case "OrderPayCaptureCompleteTopic":
+		return "OrderCreate"
+	case "TicketConfirmTopic":
+		return "OrderConfirm"
+	case "OrderRedeemTopic":
+		return "OrderRedeem"
+	case "OrderRefundApplyTopic":
+		return "OrderRefund"
+	case "OrderRefundCompleteTopic":
+		return "OrderRefundSuccess"
+	}
+	return ""
+}
+
+//类型推断
+func infer() {
+	m := make(map[string]string)
+	m["name"] = "nick"
+	var i interface{} = m
+	switch v := i.(type) {
+	case map[string]string:
+		fmt.Println("map is :", v["name"])
+	}
+}
+func do(i interface{}) {
+	switch v := i.(type) {
+	case int:
+		fmt.Printf("Twice %v is %v\n", v, v*2)
+	case string:
+		fmt.Printf("%q is %v bytes long\n", v, len(v))
+	default:
+		fmt.Printf("I don't know about type %T!\n", v)
+	}
+}
 func main() {
-	testCh()
+	infer()
+	//genInsertMqSql()
+	//testMap()
+	//testCh()
 	//testMap()
 	//testTime()
 	//bytes := []byte("dfsdfs")
