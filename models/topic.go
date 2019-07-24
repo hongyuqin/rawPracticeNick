@@ -5,6 +5,7 @@ import "time"
 type Topic struct {
 	Model
 	TopicName      string `json:"topic_name"`
+	Photo          string `json:"photo"`
 	OptionA        string `json:"option_a"`
 	OptionB        string `json:"option_b"`
 	OptionC        string `json:"option_c"`

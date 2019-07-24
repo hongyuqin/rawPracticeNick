@@ -7,15 +7,16 @@ url:/home
     "code": 200,
     "msg": "",
     "data": {
-     	"rank":10,//排名
-     	"total":100,//总人数
     	"left_days":,//考试剩余天数
-    	"daily_need_num":,//每日需刷题数量
+    	"daily_need_num":,//每日需刷题数量 今日做题
     	"today_practice_num":,//今日刷题数量 存redis
     	"has_learn_num":,//已学数量
     	"wrong_num":10,//做错数量 需复习数量
     	"region":,//地区
     	"total_topic_num":,//总题目数
+    	"exam_type":xx,//考试类型
+    	"element_type_one":,//要素轴类型第一层
+    	"element_type_two":,//要素轴类型第二层
     }
 }
 
@@ -84,6 +85,9 @@ url:/nextCollect?isBegin=true&currentIndex=10&operate=last
     	"option_b":"",
     	"option_c":"",
     	"option_d":"",
+    	"collect":true,//是否被收藏
+    	"to_learn_num":10,//需新学
+    	"wrong_num":10,//需复习
     }
 }
 
@@ -109,6 +113,14 @@ url:/answer?topic_id=xx&my_answer=C
 }
 
 6.设置要素轴
+功能：
+url:/setModel?exam_type=xx&element_type_one=xx&element_type_two=xx
+请求方式：GET
+返回参数：
+{
+    "code": 200,
+    "msg": ""
+}
 
 gg 7.获取计划
 功能：点击修改计划，获取计划的信息
@@ -122,6 +134,7 @@ url:/getPlan
     	"region":"",//地域选择：国家、深圳
         "exam_type":"",//参加考试类型：公务员考、事业单位考
         "daily_need_num":,//每日需刷题数量
+        //地域选择 考试类型的值和type先在后台写死
     }
 }
 
@@ -136,13 +149,6 @@ url:/plan?region=xx&exam_type=xx&daily_need_num=xx
     "code": 200,
     "msg": ""
 }
-
-TODO:
-7.日历
-url:/calendar
-请求方式：GET
-请求参数：
-返回参数：
 
 gg 8.收藏题目
 功能：用户收藏题目后，记录到后台的收藏表
@@ -180,6 +186,8 @@ url:/getAnalysis?topic_id=xx
     	"topic_analysis":"",//解析
     	"wrong_num":,//做错数量
     	"right_num"://作对数量
+    	"year":2019//所属年份
+    	"element_arr":["",""] //所属模块
     }
 }
 

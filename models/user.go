@@ -7,14 +7,11 @@ type User struct {
 	UserName       string `json:"user_name"`
 	OpenId         string `json:"open_id"`
 	HasLearnNum    int    `json:"has_learn_num"`
-	DailyNeedNum   int    `json:"daily_need_num"`
 	AnswerDuration int    `json:"answer_duration"`
 	PracticeDays   int    `json:"practice_days"`
 	PracticeTime   int    `json:"practice_time"`
 	AnswerNum      int    `json:"answer_num"`
 	WrongNum       int    `json:"wrong_num"`
-	Region         string `json:"region"`
-	ExamType       string `json:"exam_type"`
 }
 
 func AddUser(user User) error {
@@ -54,9 +51,6 @@ func UpdateUser(user *User) error {
 	if user.HasLearnNum > 0 {
 		data["has_learn_num"] = user.HasLearnNum
 	}
-	if user.DailyNeedNum > 0 {
-		data["daily_need_num"] = user.DailyNeedNum
-	}
 	if user.AnswerDuration > 0 {
 		data["answer_duration"] = user.AnswerDuration
 	}
@@ -68,12 +62,6 @@ func UpdateUser(user *User) error {
 	}
 	if user.AnswerNum > 0 {
 		data["answer_num"] = user.AnswerNum
-	}
-	if user.Region != "" {
-		data["region"] = user.Region
-	}
-	if user.ExamType != "" {
-		data["exam_type"] = user.ExamType
 	}
 	if err := db.Model(&User{}).Where("open_id = ? AND flag = 0 ", user.OpenId).Updates(data).Error; err != nil {
 		return err

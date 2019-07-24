@@ -14,6 +14,7 @@ type Topic struct {
 	Index     int    `json:"index"`
 	TopicId   int    `json:"topic_id"`
 	TopicName string `json:"topic_name"`
+	Photo     string `json:"photo"`
 	OptionA   string `json:"option_a"`
 	OptionB   string `json:"option_b"`
 	OptionC   string `json:"option_c"`
@@ -32,14 +33,14 @@ type AnswerResp struct {
 
 func getBeginTopic(req *TopicReq) (*Topic, error) {
 	allTopicsMap := make(map[int]struct{})
-	user, err := models.SelectUserByOpenId(req.AccessToken)
+	setting, err := models.SelectSettingByOpenId(req.AccessToken)
 	if err != nil {
-		logrus.Error("get user error")
+		logrus.Error("get setting error")
 		return nil, err
 	}
-	region := user.Region
-	elementTypeOne := ""
-	elementTypeTwo := ""
+	region := setting.Region
+	elementTypeOne := setting.ElementTypeOne
+	elementTypeTwo := setting.ElementTypeTwo
 	topics, err := models.GetTopics(&models.Topic{
 		Region:         region,
 		ElementTypeOne: elementTypeOne,
@@ -103,6 +104,7 @@ func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
 	return &Topic{
 		Index:     index,
 		TopicId:   topic.ID,
+		Photo:     topic.Photo,
 		TopicName: topic.TopicName,
 		OptionA:   topic.OptionA,
 		OptionB:   topic.OptionB,
