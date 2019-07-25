@@ -1,11 +1,13 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"io/ioutil"
 	"klook.libs/utils"
 	"os"
 	"strings"
+	"sync"
 	"time"
 )
 
@@ -134,7 +136,7 @@ func genInsertMqSql() {
 			uuid := utils.GetUUIDString()
 			//3.组装sql
 			//3.1 mqConsumerLog
-			insertMqLogSql := fmt.Sprintf(insertMqConsumerLogPattern, uuid, dataType, topic, channel, fmt.Sprintf(`AES_ENCRYPT('%s','nRajDntseUtIIJqs')`, json))
+			insertMqLogSql := fmt.Sprintf(insertMqConsumerLogPattern, uuid, dataType, topic, channel, fmt.Sprintf(`AES_ENCRYPT('%s','nRajDntseUtIIJqs')`, strings.ReplaceAll(json, "'", "\\'")))
 			n3, err := f.WriteString(insertMqLogSql + "\n")
 			if err != nil {
 				fmt.Println("生成sql失败")
@@ -200,8 +202,88 @@ func do(i interface{}) {
 		fmt.Printf("I don't know about type %T!\n", v)
 	}
 }
+func getLotNumber() {
+	dat, err := ioutil.ReadFile("./file/lotNumberOrgin.txt")
+	if err != nil {
+		fmt.Printf("gen sql error")
+		return
+	}
+	//fmt.Print(string(dat))
+	arr := strings.Split(string(dat), "\n")
+	fmt.Println("arr len is :", len(arr))
+	//0.创建文件 可以写入
+	f, err := os.Create("./file/lotNumber.txt")
+	if err != nil {
+		fmt.Println("创建文件失败")
+		return
+	}
+	defer f.Close()
+	fmt.Println("len is :", len(arr))
+	//1.以换行分割
+	set := map[string]struct{}{}
+	for _, str := range arr {
+		beginIndex := strings.Index(str, "RC")
+		if beginIndex <= 0 {
+			continue
+		}
+		lotNumber := str[beginIndex : beginIndex+20]
+		set[lotNumber] = struct{}{}
+	}
+	for key, _ := range set {
+		f.WriteString(key + "\n")
+	}
+	f.Sync()
+
+}
+func getDuration() {
+	now := time.Now()
+	time.Sleep(time.Second)
+	fmt.Printf("%d", time.Since(now))
+}
+
+//1.等待协程结束
+func waitGroup() {
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go func() {
+		time.Sleep(1 * time.Second)
+		fmt.Println("one finish")
+		wg.Done()
+	}()
+	go func() {
+		time.Sleep(2 * time.Second)
+		fmt.Println("second finish")
+		wg.Done()
+	}()
+	wg.Wait()
+	fmt.Println("total finish")
+}
+func ctxDone() {
+	ctx, cancel := context.WithCancel(context.Background())
+	go func(ctx context.Context) {
+		for {
+			select {
+			case <-ctx.Done():
+				fmt.Println("监控退出，停止了...")
+				return
+			default:
+				fmt.Println("goroutine监控中...")
+				time.Sleep(2 * time.Second)
+			}
+		}
+	}(ctx)
+
+	time.Sleep(10 * time.Second)
+	fmt.Println("可以了，通知监控停止")
+	cancel()
+	//为了检测监控过是否停止，如果没有监控输出，就表示停止了
+	time.Sleep(5 * time.Second)
+}
 func main() {
-	infer()
+	//waitGroup()
+	//getDuration()
+	//getLotNumber()
+	//infer()
 	//genInsertMqSql()
 	//testMap()
 	//testCh()
