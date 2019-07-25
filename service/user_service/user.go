@@ -18,8 +18,6 @@ import (
     	"wrong_num":10,//做错数量 需复习数量
 */
 type HomeDetail struct {
-	Rank             int    `json:"rank"`
-	Total            int    `json:"total"`
 	LeftDays         int    `json:"left_days"`
 	TodayPracticeNum int    `json:"today_practice_num"`
 	DailyNeedNum     int    `json:"daily_need_num"`
@@ -27,6 +25,9 @@ type HomeDetail struct {
 	WrongNum         int    `json:"wrong_num"`
 	TotalTopicNum    int    `json:"total_topic_num"`
 	Region           string `json:"region"`
+	ExamType         string `json:"exam_type"`
+	ElementTypeOne   string `json:"element_type_one"`
+	ElementTypeTwo   string `json:"element_type_two"`
 }
 
 func Home(openId string) (*HomeDetail, error) {
@@ -34,13 +35,6 @@ func Home(openId string) (*HomeDetail, error) {
 	user, err := models.SelectUserByOpenId(openId)
 	if err != nil {
 		logrus.Error("select user error :", err)
-		return nil, err
-	}
-	//TODO 1.获取排名
-	//2.获取总人数 TOTAL
-	count, err := models.CountUser(user.Region, user.ExamType)
-	if err != nil {
-		logrus.Error("count user error :", err)
 		return nil, err
 	}
 	//TODO:3.获取剩余天数
@@ -61,14 +55,17 @@ func Home(openId string) (*HomeDetail, error) {
 		logrus.Error("GetWrongTopics error :", err)
 		return nil, err
 	}
+	setting, err := models.SelectSettingByOpenId(openId)
+	if err != nil {
+		logrus.Error("get setting error")
+		return nil, err
+	}
 	homeDetail := &HomeDetail{
-		Rank:             1,
-		Total:            count,
 		TodayPracticeNum: todayNum,
-		DailyNeedNum:     user.DailyNeedNum,
+		DailyNeedNum:     setting.DailyNeedNum,
 		HasLearnNum:      user.HasLearnNum,
 		WrongNum:         len(topics),
-		Region:           user.Region,
+		Region:           setting.Region,
 		TotalTopicNum:    1000,
 	}
 	return homeDetail, nil
@@ -82,13 +79,13 @@ type PlanReq struct {
 }
 
 func Plan(req *PlanReq) error {
-	if err := models.UpdateUser(&models.User{
+	if err := models.UpdateSetting(&models.Setting{
 		OpenId:       req.AccessToken,
 		Region:       req.Region,
 		ExamType:     req.ExamType,
 		DailyNeedNum: req.DailyNeedNum,
 	}); err != nil {
-		logrus.Error("updateUser error :", err)
+		logrus.Error("UpdateSetting error :", err)
 		return err
 	}
 	return nil
