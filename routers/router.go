@@ -33,5 +33,8 @@ func InitRouter() *gin.Engine {
 	//10.查看解析
 	r.GET("/getAnalysis", api.GetAnalysis)
 
+	//11.设置要素轴
+	r.GET("/setting", api.Plan)
+
 	return r
 }

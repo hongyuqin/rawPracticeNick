@@ -1,5 +1,7 @@
 package models
 
+import "time"
+
 type Setting struct {
 	Model
 	OpenId         string `json:"open_id"`
@@ -10,6 +12,14 @@ type Setting struct {
 	DailyNeedNum   int    `json:"daily_need_num"`
 }
 
+func AddSetting(setting Setting) error {
+	setting.CreateTime = time.Now()
+	setting.UpdateTime = time.Now()
+	if err := db.Create(&setting).Error; err != nil {
+		return err
+	}
+	return nil
+}
 func SelectSettingByOpenId(openId string) (*Setting, error) {
 	var setting Setting
 	err := db.Where("open_id = ? AND flag = 0", openId).First(&setting).Error

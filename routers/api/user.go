@@ -10,8 +10,6 @@ import (
 	"rawPracticeNick/models"
 	"rawPracticeNick/pkg/app"
 	"rawPracticeNick/pkg/e"
-	"rawPracticeNick/pkg/gredis"
-	"rawPracticeNick/pkg/util"
 	"rawPracticeNick/service/user_service"
 )
 
@@ -36,7 +34,8 @@ func GetAccessToken(c *gin.Context) {
 	appG := app.Gin{C: c}
 	jsCode := c.Query("code")
 	logrus.Info("jsCode is :", jsCode)
-	body, _ := util.GetOpenId(jsCode)
+	//body, _ := util.GetOpenId(jsCode)
+	body := `{"openid":"abc","session_key":"xx"}`
 	logrus.Info("body is :", body)
 
 	resp := &Resp{}
@@ -45,29 +44,38 @@ func GetAccessToken(c *gin.Context) {
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 	}
 	//1.保存用户
-	exist, err := gredis.SIsmember(common.OPENID_SET, resp.OpenId)
+	/*exist, err := gredis.SIsmember(common.OPENID_SET, resp.OpenId)
 	if err != nil {
 		logrus.Error("redis error :", err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
-	}
+	}*/
+	exist := false
 	if !exist {
 		//不存在该用户 插入redis,更新数据库
-		if err = gredis.SAdd(common.OPENID_SET, resp.OpenId); err != nil {
+		/*if err := gredis.SAdd(common.OPENID_SET, resp.OpenId); err != nil {
 			logrus.Error("redis error :", err)
 			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 			return
-		}
-		if err = models.AddUser(models.User{
-			OpenId:       resp.OpenId,
-			Region:       common.REGION_SZ,
-			ExamType:     common.EXAM_TYPE_CIVIL,
-			DailyNeedNum: 100,
+		}*/
+		if err := models.AddUser(models.User{
+			OpenId: resp.OpenId,
 		}); err != nil {
 			logrus.Error("addUser error :", err)
 			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 			return
 		}
+		if err := models.AddSetting(models.Setting{
+			OpenId:       resp.OpenId,
+			Region:       common.REGION_SZ,
+			ExamType:     common.EXAM_TYPE_CIVIL,
+			DailyNeedNum: 100,
+		}); err != nil {
+			logrus.Error("addSetting error :", err)
+			appG.Response(http.StatusInternalServerError, e.ERROR, nil)
+			return
+		}
+
 	}
 	//2.返回openId
 	appG.Response(http.StatusOK, e.SUCCESS, map[string]string{
@@ -109,15 +117,15 @@ func Plan(c *gin.Context) {
 func GetPlan(c *gin.Context) {
 	appG := app.Gin{C: c}
 	openId := c.Query("accessToken")
-	user, err := models.SelectUserByOpenId(openId)
-	if err != nil || user == nil {
-		logrus.Error("findUserByOpenId openId error :", openId, err)
+	setting, err := models.SelectSettingByOpenId(openId)
+	if err != nil || setting == nil {
+		logrus.Error("SelectSettingByOpenId openId error :", openId, err)
 		appG.Response(http.StatusInternalServerError, e.ERROR, nil)
 		return
 	}
 	data := make(map[string]interface{})
-	data["region"] = user.Region
-	data["exam_type"] = user.ExamType
-	data["daily_need_num"] = user.DailyNeedNum
+	data["region"] = setting.Region
+	data["exam_type"] = setting.ExamType
+	data["daily_need_num"] = setting.DailyNeedNum
 	appG.Response(http.StatusOK, e.SUCCESS, data)
 }

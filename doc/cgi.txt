@@ -1,3 +1,5 @@
+tips:
+  1.除了第一个接口，其他接口都要带上accessToken用作鉴权
 gg 1.首页
 url:/home
 请求方式：GET
@@ -114,7 +116,7 @@ url:/answer?topic_id=xx&my_answer=C
 
 6.设置要素轴
 功能：
-url:/setModel?exam_type=xx&element_type_one=xx&element_type_two=xx
+url:/setting?exam_type=xx&element_type_one=xx&element_type_two=xx
 请求方式：GET
 返回参数：
 {

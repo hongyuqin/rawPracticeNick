@@ -6,6 +6,11 @@
     用户id 分数
   题目评论表
     题目id 用户id 评论内容
+drop table done_topic;
+drop table score;
+drop table topic;
+drop table user;
+drop table wrong_topic;
 
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -22,7 +27,7 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   KEY `idx_open_id` (`open_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户表';
-insert into table user (username,open_id) values ('hongyuqin','xx');
+insert into user (user_name,open_id) values ('hongyuqin','xx');
 
 #目前只放用户要素轴的选择
 CREATE TABLE `setting` (
@@ -30,8 +35,8 @@ CREATE TABLE `setting` (
   `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
   `region` varchar(20) DEFAULT '' COMMENT '地域',
   `exam_type` varchar(40) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
-  `element_type_one` varchar(10) DEFAULT '' COMMENT '要素轴类型第一层',
-  `element_type_two` varchar(10) DEFAULT '' COMMENT '要素轴类型第二层',
+  `element_type_one` varchar(30) DEFAULT '' COMMENT '要素轴类型第一层',
+  `element_type_two` varchar(30) DEFAULT '' COMMENT '要素轴类型第二层',
   `daily_need_num` int(10) DEFAULT 0 COMMENT '每日需刷题数量',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
@@ -51,6 +56,8 @@ CREATE TABLE `topic` (
   `wrong_num` int(10) DEFAULT 0 COMMENT '做错数量',
   `right_num` int(10) DEFAULT 0 COMMENT '做对数量',
   `year` int(10) DEFAULT 0 COMMENT '所属年份',
+  `region` varchar(20) DEFAULT '' COMMENT '地域',
+  `photo` varchar(50) DEFAULT '' COMMENT '图片',
   `exam_type` varchar(20) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
   `element_type_one` varchar(10) DEFAULT '' COMMENT '要素轴类型第一层',
   `element_type_two` varchar(10) DEFAULT '' COMMENT '要素轴类型第二层',
@@ -59,8 +66,6 @@ CREATE TABLE `topic` (
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '题目表';
-alter table `topic` add column `region` varchar(20) DEFAULT '' COMMENT '地域';
-alter table `topic` add column `photo` varchar(50) DEFAULT '' COMMENT '图片' after `topic_name`;
 
 CREATE TABLE `score` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -90,9 +95,9 @@ CREATE TABLE `collect` (
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `open_id_topic_id_idx1` (`open_id`,`topic_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户收藏题目表';
-alter table collect add unique index(open_id,topic_id);
 
  CREATE TABLE `wrong_topic` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -101,9 +106,9 @@ alter table collect add unique index(open_id,topic_id);
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `open_id_topic_id_idx1` (`open_id`,`topic_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户错误题目表';
-alter table wrong_topic add unique index(open_id,topic_id);
 
 
  CREATE TABLE `done_topic` (
@@ -113,9 +118,9 @@ alter table wrong_topic add unique index(open_id,topic_id);
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `open_id_topic_id_idx1` (`open_id`,`topic_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户已做题目表';
-alter table done_topic add unique index(open_id,topic_id);
 
 
 

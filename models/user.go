@@ -4,14 +4,13 @@ import "time"
 
 type User struct {
 	Model
-	UserName       string `json:"user_name"`
-	OpenId         string `json:"open_id"`
-	HasLearnNum    int    `json:"has_learn_num"`
-	AnswerDuration int    `json:"answer_duration"`
-	PracticeDays   int    `json:"practice_days"`
-	PracticeTime   int    `json:"practice_time"`
-	AnswerNum      int    `json:"answer_num"`
-	WrongNum       int    `json:"wrong_num"`
+	UserName     string `json:"user_name"`
+	OpenId       string `json:"open_id"`
+	HasLearnNum  int    `json:"has_learn_num"`
+	PracticeDays int    `json:"practice_days"`
+	PracticeTime int    `json:"practice_time"`
+	AnswerNum    int    `json:"answer_num"`
+	WrongNum     int    `json:"wrong_num"`
 }
 
 func AddUser(user User) error {
@@ -50,9 +49,6 @@ func UpdateUser(user *User) error {
 	//更新已学题目，每日需刷题数量，答题时长，练习天数，创建练习次数，答题量
 	if user.HasLearnNum > 0 {
 		data["has_learn_num"] = user.HasLearnNum
-	}
-	if user.AnswerDuration > 0 {
-		data["answer_duration"] = user.AnswerDuration
 	}
 	if user.PracticeDays > 0 {
 		data["practice_days"] = user.PracticeDays

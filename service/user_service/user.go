@@ -72,18 +72,22 @@ func Home(openId string) (*HomeDetail, error) {
 }
 
 type PlanReq struct {
-	AccessToken  string `schema:"accessToken"`
-	Region       string `schema:"region"`
-	ExamType     string `schema:"exam_type"`
-	DailyNeedNum int    `schema:"daily_need_num"`
+	AccessToken    string `schema:"accessToken"`
+	Region         string `schema:"region"`
+	ExamType       string `schema:"exam_type"`
+	DailyNeedNum   int    `schema:"daily_need_num"`
+	ElementTypeOne string `schema:"element_type_one"`
+	ElementTypeTwo string `schema:"element_type_two"`
 }
 
 func Plan(req *PlanReq) error {
 	if err := models.UpdateSetting(&models.Setting{
-		OpenId:       req.AccessToken,
-		Region:       req.Region,
-		ExamType:     req.ExamType,
-		DailyNeedNum: req.DailyNeedNum,
+		OpenId:         req.AccessToken,
+		Region:         req.Region,
+		ExamType:       req.ExamType,
+		DailyNeedNum:   req.DailyNeedNum,
+		ElementTypeOne: req.ElementTypeOne,
+		ElementTypeTwo: req.ElementTypeTwo,
 	}); err != nil {
 		logrus.Error("UpdateSetting error :", err)
 		return err
