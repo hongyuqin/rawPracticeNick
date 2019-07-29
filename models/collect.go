@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type Collect struct {
 	Model
 	OpenId  string `json:"open_id"`
@@ -18,8 +16,6 @@ func AddCollect(collect Collect) error {
 	if count == 1 {
 		return nil
 	}
-	collect.UpdateTime = time.Now()
-	collect.CreateTime = time.Now()
 	if err := db.Create(&collect).Error; err != nil {
 		return err
 	}

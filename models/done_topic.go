@@ -18,8 +18,6 @@ func AddDoneTopic(doneTopic DoneTopic) error {
 	if count == 1 {
 		return nil
 	}
-	doneTopic.UpdateTime = time.Now()
-	doneTopic.CreateTime = time.Now()
 	if err := db.Create(&doneTopic).Error; err != nil {
 		return err
 	}

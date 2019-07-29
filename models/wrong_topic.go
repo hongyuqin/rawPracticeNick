@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type WrongTopic struct {
 	Model
 	OpenId  string `json:"open_id"`
@@ -18,8 +16,6 @@ func AddWrongTopic(wrongTopic WrongTopic) error {
 	if count == 1 {
 		return nil
 	}
-	wrongTopic.UpdateTime = time.Now()
-	wrongTopic.CreateTime = time.Now()
 	if err := db.Create(&wrongTopic).Error; err != nil {
 		return err
 	}

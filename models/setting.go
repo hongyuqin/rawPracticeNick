@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type Setting struct {
 	Model
 	OpenId         string `json:"open_id"`
@@ -13,8 +11,6 @@ type Setting struct {
 }
 
 func AddSetting(setting Setting) error {
-	setting.CreateTime = time.Now()
-	setting.UpdateTime = time.Now()
 	if err := db.Create(&setting).Error; err != nil {
 		return err
 	}

@@ -21,8 +21,6 @@ type Topic struct {
 }
 
 func AddTopic(topic *Topic) error {
-	topic.CreateTime = time.Now()
-	topic.UpdateTime = time.Now()
 	if err := db.Create(&topic).Error; err != nil {
 		return err
 	}

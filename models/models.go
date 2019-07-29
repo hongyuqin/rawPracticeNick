@@ -13,8 +13,8 @@ var db *gorm.DB
 
 type Model struct {
 	ID         int       `gorm:"primary_key" json:"id"`
-	CreateTime time.Time `json:"create_time"`
-	UpdateTime time.Time `json:"update_time"`
+	CreateTime time.Time `json:"create_time" gorm:"default:current_time"`
+	UpdateTime time.Time `json:"update_time" gorm:"default:current_time" on update current_time"`
 	Flag       int       `json:"flag"`
 }
 

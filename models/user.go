@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type User struct {
 	Model
 	UserName     string `json:"user_name"`
@@ -14,8 +12,6 @@ type User struct {
 }
 
 func AddUser(user User) error {
-	user.CreateTime = time.Now()
-	user.UpdateTime = time.Now()
 	if err := db.Create(&user).Error; err != nil {
 		return err
 	}
