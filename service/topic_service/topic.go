@@ -19,12 +19,17 @@ type Topic struct {
 	OptionB   string `json:"option_b"`
 	OptionC   string `json:"option_c"`
 	OptionD   string `json:"option_d"`
+	Collect   bool   `json:"collect"`
 }
 
 //提交答案的返回
 type AnswerResp struct {
-	MyAnswer      string `json:"my_answer"`
-	Right         bool   `json:"right"`
+	Analysis
+	MyAnswer string `json:"my_answer"`
+	Right    bool   `json:"right"`
+}
+
+type Analysis struct {
 	Answer        string `json:"answer"`
 	TopicAnalysis string `json:"topic_analysis"`
 	WrongNum      int    `json:"wrong_num"`
@@ -70,7 +75,7 @@ func getBeginTopic(req *TopicReq) (*Topic, error) {
 		return nil, err
 	}
 	for topicId := range allTopicsMap {
-		_, err = gredis.LPush(common.TOPIC_LIST+req.AccessToken, strconv.Itoa(topicId))
+		_, err = gredis.RPush(common.TOPIC_LIST+req.AccessToken, strconv.Itoa(topicId))
 		if err != nil {
 			logrus.Error("lpush redis error :", err)
 			return nil, err
@@ -101,6 +106,11 @@ func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
 		logrus.Error("GetTopic error :", err)
 		return nil, err
 	}
+	collect, err := models.ExistCollect(openId, topicId)
+	if err != nil {
+		logrus.Error("ExistCollect error :", err)
+		return nil, err
+	}
 	return &Topic{
 		Index:     index,
 		TopicId:   topic.ID,
@@ -110,6 +120,7 @@ func getTopicByIndex(prefix, openId string, index int) (*Topic, error) {
 		OptionB:   topic.OptionB,
 		OptionC:   topic.OptionC,
 		OptionD:   topic.OptionD,
+		Collect:   collect,
 	}, nil
 }
 func NextTopic(req *TopicReq) (*Topic, error) {
@@ -152,6 +163,14 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 		if err = gredis.INCR(common.TODAY_PREFIX+openId, util.GetNextDayBegin()); err != nil {
 			logrus.Error("incr error :", err)
 		}
+		//3.往用户做过题表插入数据
+		if err = models.AddDoneTopic(models.DoneTopic{
+			OpenId:  openId,
+			TopicId: topicId,
+		}); err != nil {
+			logrus.Error("AddDoneTopic error :", err)
+			return nil, err
+		}
 	} else {
 		right = false
 		topic.WrongNum = topic.WrongNum + 1
@@ -168,14 +187,6 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 		logrus.Error("UpdateTopic error :", err)
 		return nil, err
 	}
-	//3.往用户做过题表插入数据
-	if err = models.AddDoneTopic(models.DoneTopic{
-		OpenId:  openId,
-		TopicId: topicId,
-	}); err != nil {
-		logrus.Error("AddDoneTopic error :", err)
-		return nil, err
-	}
 	//3-1 存一个今日已答题
 	if err = gredis.SAdd(common.TODAY_FINISH_PREFIX+openId, string(topicId)); err != nil {
 		logrus.Error("AddDoneTopic sadd error ", err)
@@ -188,17 +199,18 @@ func Answer(openId string, topicId int, myAnswer string) (*AnswerResp, error) {
 	}
 
 	//4.返回
-	return &AnswerResp{
-		MyAnswer:      myAnswer,
-		Right:         right,
-		Answer:        topic.Answer,
-		TopicAnalysis: topic.TopicAnalysis,
-		WrongNum:      topic.WrongNum,
-		RightNum:      topic.RightNum,
-	}, nil
+	answerResp := &AnswerResp{
+		MyAnswer: myAnswer,
+		Right:    right,
+	}
+	answerResp.Answer = topic.Answer
+	answerResp.TopicAnalysis = topic.TopicAnalysis
+	answerResp.WrongNum = topic.WrongNum
+	answerResp.RightNum = topic.RightNum
+	return answerResp, nil
 
 }
-func GetAnalysis(openId string, topicId int) (*AnswerResp, error) {
+func GetAnalysis(openId string, topicId int) (*Analysis, error) {
 	//1.看下答案对不对
 	topic, err := models.GetTopic(topicId)
 	if err != nil {
@@ -209,12 +221,12 @@ func GetAnalysis(openId string, topicId int) (*AnswerResp, error) {
 		logrus.Error("GetTopic empty :", topicId)
 		return nil, err
 	}
-	return &AnswerResp{
-		Answer:        topic.Answer,
-		TopicAnalysis: topic.TopicAnalysis,
-		WrongNum:      topic.WrongNum,
-		RightNum:      topic.RightNum,
-	}, nil
+	anlysis := &Analysis{}
+	anlysis.Answer = topic.Answer
+	anlysis.TopicAnalysis = topic.TopicAnalysis
+	anlysis.WrongNum = topic.WrongNum
+	anlysis.RightNum = topic.RightNum
+	return anlysis, nil
 }
 func Collect(openId string, topicId int) error {
 	if err := models.AddCollect(models.Collect{

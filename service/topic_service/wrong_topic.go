@@ -10,9 +10,9 @@ import (
 )
 
 func getBeginWrongTopic(req *TopicReq) (*Topic, error) {
-	collects, err := models.GetCollects(req.AccessToken)
+	wrongTopics, err := models.GetWrongTopics(req.AccessToken)
 	if err != nil {
-		logrus.Error("GetCollects error :", err)
+		logrus.Error("GetWrongTopics error :", err)
 		return nil, err
 	}
 	_, err = gredis.Delete(common.WRONG_TOPIC_LIST + req.AccessToken)
@@ -20,10 +20,14 @@ func getBeginWrongTopic(req *TopicReq) (*Topic, error) {
 		logrus.Error("delete error :", err)
 		return nil, err
 	}
-	for _, collect := range collects {
-		_, err = gredis.LPush(common.WRONG_TOPIC_LIST, strconv.Itoa(collect.TopicId))
+	if len(wrongTopics) == 0 {
+		logrus.Error("no wrong topics")
+		return nil, errors.New("当前无错题")
+	}
+	for _, wrongTopic := range wrongTopics {
+		_, err = gredis.RPush(common.WRONG_TOPIC_LIST+req.AccessToken, strconv.Itoa(wrongTopic.TopicId))
 		if err != nil {
-			logrus.Error("lpush redis error :", err)
+			logrus.Error("rpush redis error :", err)
 			return nil, err
 		}
 	}

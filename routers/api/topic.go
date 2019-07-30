@@ -42,7 +42,7 @@ func NextWrongTopic(c *gin.Context) {
 	topic, err := topic_service.NextWrongTopic(req)
 	if err != nil {
 		logrus.Error("NextWrongTopic error :", err)
-		appG.Response(http.StatusOK, e.ERROR_NO_WRONG_TOPIC, nil)
+		appG.Response(http.StatusOK, e.ERROR_NO_WRONG_TOPIC, err.Error())
 		return
 	}
 	appG.Response(http.StatusOK, e.SUCCESS, topic)

@@ -57,3 +57,14 @@ func GetCollects(openId string) ([]Collect, error) {
 	}
 	return collects, nil
 }
+func ExistCollect(openId string, topicId int) (bool, error) {
+	count := 0
+	data := make(map[string]interface{})
+	data["open_id"] = openId
+	data["topic_id"] = topicId
+	db.Model(&Collect{}).Where(data).Count(&count)
+	if count == 1 {
+		return true, nil
+	}
+	return false, nil
+}

@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type Topic struct {
 	Model
 	TopicName      string `json:"topic_name"`

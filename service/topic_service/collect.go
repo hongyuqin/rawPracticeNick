@@ -28,7 +28,7 @@ func getBeginCollect(req *TopicReq) (*Topic, error) {
 		return nil, err
 	}
 	for _, collect := range collects {
-		_, err = gredis.LPush(common.COLLECT_LIST, strconv.Itoa(collect.TopicId))
+		_, err = gredis.RPush(common.COLLECT_LIST+req.AccessToken, strconv.Itoa(collect.TopicId))
 		if err != nil {
 			logrus.Error("lpush redis error :", err)
 			return nil, err

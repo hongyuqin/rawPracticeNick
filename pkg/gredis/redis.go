@@ -167,7 +167,12 @@ func LPush(key, value string) (int, error) {
 	defer conn.Close()
 
 	return redis.Int(conn.Do("LPUSH", key, value))
+}
+func RPush(key, value string) (int, error) {
+	conn := RedisConn.Get()
+	defer conn.Close()
 
+	return redis.Int(conn.Do("RPUSH", key, value))
 }
 func LIndex(key string, index int) (int, error) {
 	conn := RedisConn.Get()

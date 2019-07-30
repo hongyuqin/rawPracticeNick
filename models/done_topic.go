@@ -1,7 +1,5 @@
 package models
 
-import "time"
-
 type DoneTopic struct {
 	Model
 	OpenId  string `json:"open_id"`

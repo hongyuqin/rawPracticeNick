@@ -6,11 +6,13 @@
     用户id 分数
   题目评论表
     题目id 用户id 评论内容
-drop table done_topic;
-drop table score;
-drop table topic;
-drop table user;
-drop table wrong_topic;
+drop table if exists user;
+drop table if exists setting;
+drop table if exists topic;
+drop table if exists comment;
+drop table if exists collect;
+drop table if exists wrong_topic;
+drop table if exists done_topic;
 
 CREATE TABLE `user` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
@@ -27,7 +29,6 @@ CREATE TABLE `user` (
   PRIMARY KEY (`id`),
   KEY `idx_open_id` (`open_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户表';
-insert into user (user_name,open_id) values ('hongyuqin','xx');
 
 #目前只放用户要素轴的选择
 CREATE TABLE `setting` (
@@ -59,23 +60,16 @@ CREATE TABLE `topic` (
   `region` varchar(20) DEFAULT '' COMMENT '地域',
   `photo` varchar(50) DEFAULT '' COMMENT '图片',
   `exam_type` varchar(20) DEFAULT '' COMMENT '考试类型：公务员考：EXAM_TYPE_CIVIL 事业单位考：EXAM_TYPE_INSTITUTION',
-  `element_type_one` varchar(10) DEFAULT '' COMMENT '要素轴类型第一层',
-  `element_type_two` varchar(10) DEFAULT '' COMMENT '要素轴类型第二层',
+  `element_type_one` varchar(30) DEFAULT '' COMMENT '要素轴类型第一层',
+  `element_type_two` varchar(30) DEFAULT '' COMMENT '要素轴类型第二层',
   `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
   `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
   `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '题目表';
-
-CREATE TABLE `score` (
-  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-  `open_id` varchar(50) DEFAULT '' COMMENT '开放平台id',
-  `score` int(10) DEFAULT 0 COMMENT '分数',
-  `create_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-  `update_time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '修改时间',
-  `flag` tinyint(4) NOT NULL DEFAULT '0' COMMENT '0: 默认 1: 逻辑删除',
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 comment '用户成绩表';
+insert into topic (topic_name,option_a,option_b,option_c,option_d,answer,topic_analysis,year,region,exam_type,element_type_one,element_type_two) values
+('第一题','a','b','c','d','答案a','解析a',2019,'SZ','GWY','one','1'),
+('第二题','a2','b2','c2','d2','答案a','解析a',2019,'SZ','GWY','one','2');
 
 CREATE TABLE `comment` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
