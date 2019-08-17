@@ -4,6 +4,7 @@ import (
 	"./nickdblib"
 	"encoding/json"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -138,11 +139,12 @@ func main() {
 	nickdblib.InitDB()
 	defer nickdblib.DB.Close()
 	//1.http请求
-	http.HandleFunc("/users/findUserById", HandleFindUserById)
-	http.HandleFunc("/users/findByName", HandleFindUserByName)
-	http.HandleFunc("/users/updateUser", HandleUpdateUser)
-	http.HandleFunc("/users/addUser", HandleAddUser)
-	http.HandleFunc("/users/delUser", HandleDelUser)
+	r := mux.NewRouter()
+	r.HandleFunc("/users/findUserById", HandleFindUserById)
+	r.HandleFunc("/users/findByName", HandleFindUserByName)
+	r.HandleFunc("/users/updateUser", HandleUpdateUser)
+	r.HandleFunc("/users/addUser", HandleAddUser)
+	r.HandleFunc("/users/delUser", HandleDelUser)
 	http.ListenAndServe(":8001", nil)
 
 }
